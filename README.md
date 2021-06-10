@@ -17,7 +17,9 @@ pip3 install -r requirements.txt
 
 ```sh
 black -v .
-pylint --disable=all --enable=F,E,unreachable,duplicate-key,unnecessary-semicolon,global-variable-not-assigned,unused-variable,binary-op-exception,bad-format-string,anomalous-backslash-in-string,bad-open-mode --disable=E0402 --msg-template='{line}:{column} ({category}) {symbol}:{msg}' --reports=n --output-format=text \*_/_.py # 만점(10.00/10)이 나와야 함
+pylint --disable=all --enable=F,E,unreachable,duplicate-key,unnecessary-semicolon,global-variable-not-assigned,unused-variable,binary-op-exception,bad-format-string,anomalous-backslash-in-string,bad-open-mode --disable=E0402 --msg-template='{line}:{column} ({category}) {symbol}:{msg}' --reports=n --output-format=text \*_/_.py
 pip3 freeze > requirements.txt
 ```
+
+pylint는 만점(10.00/10)이어야 한다.
 ````
