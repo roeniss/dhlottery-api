@@ -1,10 +1,11 @@
 import copy
+from typing import Dict, List
 
 import requests
 
 
 class AuthController:
-    _authHeaders = {
+    _REQ_HEADERS = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
         "Connection": "keep-alive",
         "Cache-Control": "max-age=0",
@@ -22,36 +23,81 @@ class AuthController:
         "Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
     }
 
-    def __init__(self):
-        self.__JSESSIONID = self._getJSESSIONID()
+    _AUTH_CRED = ""
 
-    @property
-    def jsessionId(self):  # getter
-        return self.__JSESSIONID
+    def login(self, user_id: str, password: str):
+        assert type(user_id) == str
+        assert type(password) == str
 
-    def _getJSESSIONID(self):
+        default_auth_cred = (
+            self._get_default_auth_cred()
+        )  # JSessionId 값을 받아온 후, 그 값에 인증을 씌우는 방식
+
+        headers = self._generate_req_headers(default_auth_cred)
+
+        data = self._generate_body(user_id, password)
+
+        res = self._try_login(headers, data)
+
+        self._upadte_auth_cred(res)
+
+    def add_auth_cred_to_headers(self, headers: Dict) -> str:
+        assert type(headers) == Dict
+
+        copied_headers = copy.deepcopy(headers)
+        copied_headers["Cookie"] = f"JSESSIONID={self._AUTH_CRED}"
+        return copied_headers
+
+    def _get_default_auth_cred(self):
         res = requests.get(
             "https://dhlottery.co.kr/gameResult.do?method=byWin&wiselog=H_C_1_1"
         )
+
+        return self._get_j_session_id_from_response(res)
+
+    def _get_j_session_id_from_response(self, res: requests.Response):
+        assert type(res) == requests.Response
+
+        print(res.cookies)
         for cookie in res.cookies:
             if cookie.name == "JSESSIONID":
                 return cookie.value
-        raise Exception("Fail to get JSESSIONID")
 
-    def login(self, userId, password):
-        self._authHeaders["Cookie"] = f"JSESSIONID={self.__JSESSIONID}"
+        raise KeyError("JSESSIONID cookie is not set in response")
 
-        data = {
+    def _generate_req_headers(self, j_session_id: str):
+        assert type(j_session_id) == str
+
+        copied_headers = copy.deepcopy(self._REQ_HEADERS)
+        copied_headers["Cookie"] = f"JSESSIONID={j_session_id}"
+        return copied_headers
+
+    def _generate_body(self, user_id: str, password: str):
+        assert type(user_id) == str
+        assert type(password) == str
+
+        return {
             "returnUrl": "https://dhlottery.co.kr/common.do?method=main",
-            "userId": userId,
+            "userId": user_id,
             "password": password,
             "checkSave": "on",
         }
 
+    def _try_login(self, headers: dict, data: dict):
+        assert type(headers) == Dict
+        assert type(data) == Dict
+
         res = requests.post(
             "https://www.dhlottery.co.kr/userSsl.do?method=login",
-            headers=self._authHeaders,
+            headers=headers,
             data=data,
         )
-
         return res
+
+    def _upadte_auth_cred(self, res: requests.Response) -> None:
+        assert type(res) == requests.Response
+
+        # TODO: judge whether login is success or not
+        # 로그인 실패해도 jsession 값이 갱신되기 때문에, 마이페이지 방문 등으로 판단해야 할 듯
+        # + 비번 5번 틀렸을 경우엔 비번 정확해도 로그인 실패함
+        self._AUTH_CRED = self._get_j_session_id_from_response(res)
