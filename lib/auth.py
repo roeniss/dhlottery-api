@@ -1,5 +1,4 @@
 import copy
-from typing import Dict, List
 
 import requests
 
@@ -37,12 +36,12 @@ class AuthController:
 
         data = self._generate_body(user_id, password)
 
-        res = self._try_login(headers, data)
+        res = self._try_login(headers, data)  # 새로운 값의 JSESSIONID가 내려오는데, 이 값으론 로그인 안됨
 
-        self._upadte_auth_cred(res)
+        self._update_auth_cred(default_auth_cred)
 
-    def add_auth_cred_to_headers(self, headers: Dict) -> str:
-        assert type(headers) == Dict
+    def add_auth_cred_to_headers(self, headers: dict) -> str:
+        assert type(headers) == dict
 
         copied_headers = copy.deepcopy(headers)
         copied_headers["Cookie"] = f"JSESSIONID={self._AUTH_CRED}"
@@ -58,7 +57,6 @@ class AuthController:
     def _get_j_session_id_from_response(self, res: requests.Response):
         assert type(res) == requests.Response
 
-        print(res.cookies)
         for cookie in res.cookies:
             if cookie.name == "JSESSIONID":
                 return cookie.value
@@ -81,11 +79,12 @@ class AuthController:
             "userId": user_id,
             "password": password,
             "checkSave": "on",
+            "newsEventYn": "",
         }
 
     def _try_login(self, headers: dict, data: dict):
-        assert type(headers) == Dict
-        assert type(data) == Dict
+        assert type(headers) == dict
+        assert type(data) == dict
 
         res = requests.post(
             "https://www.dhlottery.co.kr/userSsl.do?method=login",
@@ -94,10 +93,10 @@ class AuthController:
         )
         return res
 
-    def _upadte_auth_cred(self, res: requests.Response) -> None:
-        assert type(res) == requests.Response
+    def _update_auth_cred(self, j_session_id: str) -> None:
+        assert type(j_session_id) == str
 
         # TODO: judge whether login is success or not
         # 로그인 실패해도 jsession 값이 갱신되기 때문에, 마이페이지 방문 등으로 판단해야 할 듯
         # + 비번 5번 틀렸을 경우엔 비번 정확해도 로그인 실패함
-        self._AUTH_CRED = self._get_j_session_id_from_response(res)
+        self._AUTH_CRED = j_session_id

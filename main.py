@@ -22,7 +22,7 @@ def login():
 
 def buy_lotto645():
     _cnt = int(input("How many (1 ~ 5) : "))
-    _mode = input("Mode (auto, manual) : ")
+    _mode = lotto645.Lotto645Mode[input("Mode (auto, manual) : ").upper()]
     lotto = lotto645.Lotto645()
     lotto.buy_lotto645(globalAuthCtrl, _cnt, _mode)
 

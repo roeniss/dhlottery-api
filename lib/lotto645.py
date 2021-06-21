@@ -1,6 +1,5 @@
 import json
 from enum import Enum
-from typing import Dict, List
 
 import requests
 from bs4 import BeautifulSoup as BS
@@ -96,9 +95,9 @@ class Lotto645:
         last_drawn_round = int(soup.find("strong", id="lottoDrwNo").text)
         return str(last_drawn_round + 1)
 
-    def _try_buying(self, headers: Dict, data: Dict) -> dict:
-        assert type(headers) == Dict
-        assert type(data) == Dict
+    def _try_buying(self, headers: dict, data: dict) -> dict:
+        assert type(headers) == dict
+        assert type(data) == dict
 
         res = requests.post(
             "https://ol.dhlottery.co.kr/olotto/game/execBuy.do",
@@ -108,11 +107,12 @@ class Lotto645:
         res.encoding = "utf-8"
         return json.loads(res.text)
 
-    def _show_result(self, body: Dict) -> None:
-        assert type(body) == Dict
+    def _show_result(self, body: dict) -> None:
+        assert type(body) == dict
 
         if body.get("loginYn") != "Y":
             print("Fail to purchase (reason: not logged in)")
+            print("[DEBUG] body: ", body)
             return
 
         result = body.get("result", {})
@@ -120,6 +120,7 @@ class Lotto645:
             print(
                 f'Fail to purchase (reason: {result.get("resultMsg", f"Unknown (resultMsg field is empty. full response: {body})")})'
             )
+            print("[DEBUG] body: ", body)
             return
 
         print(
@@ -132,9 +133,10 @@ class Lotto645:
 \tResult Message: {result["resultMsg"]}
 \t------------------"""
         )
+        print("[DEBUG] body: ", body)
 
-    def _format_lotto_numbers(self, numbers: List) -> None:
-        assert type(numbers) == List
+    def _format_lotto_numbers(self, numbers: list) -> None:
+        assert type(numbers) == list
 
         tabbed_numbers = [
             "\t\t" + number for number in numbers
