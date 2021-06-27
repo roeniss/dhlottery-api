@@ -65,9 +65,8 @@ if __name__ == "__main__":
 
     args = set_argparse()
 
-    print(args)
-
     if args.category == "lotto645":
         authCtrl = login(args.username, args.password)
         buy_lotto645(authCtrl, args.count, args.mode)
+
     exit(0)

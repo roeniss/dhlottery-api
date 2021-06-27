@@ -3,3 +3,6 @@
 *.rest
 __pycache__/
 .DS_Store
+build/
+dhl.egg-info/
+dist/
