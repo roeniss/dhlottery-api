@@ -50,15 +50,13 @@ pip3 freeze > requirements.txt
 
 pylint 수행 결과가 무조건 만점(10.0/10)이 나와야 합니다.
 
-### 그 외 개발 참고사항
-
-#### 디펜던시 체크
+### 디펜던시 체크
 
 requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합니다.
 
-#### 로또6/45 관련 data (참고용)
+### 로또6/45 관련 data (참고용)
 
-##### Request body (3 tickets)
+#### Request body (3 tickets)
 
 ```python
  data = {
@@ -72,7 +70,7 @@ requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합�
 }
 ```
 
-##### Response body (3 tickets)
+#### Response body (3 tickets)
 
 ```python
 result example:
@@ -102,4 +100,12 @@ result example:
         "nBuyAmount": 3000
     }
 }
+```
+
+### 배포
+
+바이너리 파일 생성
+
+```sh
+pyinstaller src/dhapi/main.py
 ```
