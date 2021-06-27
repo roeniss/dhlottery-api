@@ -1,12 +1,8 @@
 import argparse
-import copy
-import json
-from getpass import getpass
 
-import requests
 from colorama import Back, Fore, Style, init
 
-from lib import auth, lotto645
+from .lib import auth, lotto645
 
 
 def login(user_id: str, user_pw: str):

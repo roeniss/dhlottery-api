@@ -4,5 +4,5 @@
 __pycache__/
 .DS_Store
 build/
-dhl.egg-info/
+dhapi.egg-info/
 dist/

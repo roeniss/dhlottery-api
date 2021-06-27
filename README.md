@@ -1,4 +1,4 @@
-# DH Lottery API (Unofficial)
+# DongHaeng Lottery API (Unofficial)
 
 [동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
 
@@ -17,9 +17,9 @@
 헷갈리실까봐 사족을 붙이자면, `auto`는 번호를 자동으로 선택하는 그 자동모드를 말하는 것입니다.
 
 ```sh
-dhl -h # Help
+dhapi -h # Help
 
-dhl -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
+dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
 ```
 
 ## 작동 방식
@@ -50,15 +50,15 @@ pip3 freeze > requirements.txt
 
 pylint 수행 결과가 무조건 만점(10.0/10)이 나와야 합니다.
 
-## 그 외
+### 그 외 개발 참고사항
 
-### 디펜던시 체크
+#### 디펜던시 체크
 
 requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합니다.
 
-### 로또6/45 관련 data (참고용)
+#### 로또6/45 관련 data (참고용)
 
-#### Request body (3 tickets)
+##### Request body (3 tickets)
 
 ```python
  data = {
@@ -72,7 +72,7 @@ requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합�
 }
 ```
 
-#### Response body (3 tickets)
+##### Response body (3 tickets)
 
 ```python
 result example:
