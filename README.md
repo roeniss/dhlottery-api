@@ -1,8 +1,20 @@
+# DH Lottery API (Unofficial)
+
+[동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
+
+현재 필요한 기능이 [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1) 구매 뿐이라서 해당 부분만 구현되어 있습니다. 만약 다른 기능이 필요하시면 아래 가이드를 따라서 직접 개발하시거나, Github Issues 를 통해 개발 요청을 등록해주시길 바랍니다.
+
+## 사용법
+
+## 작동 방식
+
+동행복권 사이트는 `JSESSIONID`를 이용하여 유저를 인증합니다. 본 API에서는 `requests`를 이용해 로그인한 후 `JSESSIONID`를 메모리에 저장해 복권 구매에 활용합니다.
+
 ## 개발 가이드
 
-### pre
+### 개발 환경 세팅
 
-가상환경 활성화
+가상환경을 활성화합니다. 꼭 venv을 쓰지 않아도 괜찮습니다.
 
 ```sh
 python3 -m venv .venv
@@ -10,9 +22,9 @@ python3 -m venv .venv
 pip3 install -r requirements.txt
 ```
 
-### post
+### 커밋 전 확인 사항
 
-푸시 전 아래 과정 필요
+푸시 전 아래 작업이 필요합니다. (`black`, `pylint`, `pip freeze`)
 
 ```sh
 black -v .
@@ -20,30 +32,31 @@ pylint --disable=all --enable=F,E,unreachable,duplicate-key,unnecessary-semicolo
 pip3 freeze > requirements.txt
 ```
 
-pylint는 무조건 만점(10.00/10)이어야 한다.
+pylint 수행 결과가 무조건 만점(10.0/10)이 나와야 합니다.
 
-### 기타
+## 그 외
 
-의존성 확인 : `pipdeptree` (show dependency tree)
+### 디펜던시 체크
 
-### tmp
+requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합니다.
 
-lotto645 body backup
+### 로또6/45 관련 data (참고용)
+
+#### Request body (3 tickets)
 
 ```python
  data = {
-    "round": self._getNextRound(),
+    "round": 777,
     "direct": "172.17.20.52",
     "nBuyAmount": str(1000 * cnt),
     "param": '[{"genType":"0","arrGameChoiceNum":null,"alpabet":"A"},{"genType":"0","arrGameChoiceNum":null,"alpabet":"B"},{"genType":"0","arrGameChoiceNum":null,"alpabet":"C"}]',
-    # 아래 두 값 안넣어도 되는 것으로 확인
-    # "ROUND_DRAW_DATE": "2021/06/12",
-    # "WAMT_PAY_TLMT_END_DT": "2022/06/13",
+    # "ROUND_DRAW_DATE": "2021/06/12", # 안넣어도 작동함
+    # "WAMT_PAY_TLMT_END_DT": "2022/06/13", # 안넣어도 작동함
     "gameCnt": cnt,
 }
 ```
 
-response body from buying lotto645
+#### Response body (3 tickets)
 
 ```python
 # result example:
@@ -74,9 +87,3 @@ response body from buying lotto645
 #     }
 # }
 ```
-
-TODO:
-
-- todo 처리
-- 사용법 정리 (to Readme) & 배포
-- main 함수 쪽 정리
