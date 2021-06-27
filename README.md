@@ -38,6 +38,6 @@ python3 dhapi -h # 도움말 출력
 python3 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
 ```
 
-### 같이 개발하기
+## 같이 개발하기
 
 기여는 대환영입니다! `CONTRIBUTION.md` 파일을 참고해주세요.
