@@ -10,6 +10,17 @@
 
 // TODO
 
+현재 `brew install roeniss/dhapi`를 준비중입니다.
+
+그 전까지는 다음 명령어로 커맨드를 실행할 수 있습니다.
+
+```sh
+git clone https://github.com/roeniss/dhlottery-api
+cd dhlottery-api/src/dhapi
+python3 dhapi -h # 도움말 출력
+python3 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
+```
+
 ### 커맨드
 
 현재는 `로또6/45`를 `자동`으로 사는 기능뿐입니다. 갯수(`-c`)는 1에서 5사이로 조절할 수 있습니다. 한 주에 5장 이상을 사려고 하면 구매가 되지 않고 적절한 에러 메시지가 출력됩니다.
@@ -17,7 +28,7 @@
 헷갈리실까봐 사족을 붙이자면, `auto`는 번호를 자동으로 선택하는 그 자동모드를 말하는 것입니다.
 
 ```sh
-dhapi -h # Help
+dhapi -h # 도움말 출력
 
 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
 ```
@@ -104,8 +115,4 @@ result example:
 
 ### 배포
 
-바이너리 파일 생성
-
-```sh
-pyinstaller src/dhapi/main.py
-```
+// TODO
