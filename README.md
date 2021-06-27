@@ -17,6 +17,7 @@
 ```sh
 git clone https://github.com/roeniss/dhlottery-api
 cd dhlottery-api/src/dhapi
+pip3 install -r requirements.txt # 디펜던시를 전역으로 설치하고 싶지 않다면 가상환경을 활성화해주세요
 python3 dhapi -h # 도움말 출력
 python3 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
 ```
