@@ -2,7 +2,9 @@ import argparse
 
 from colorama import Back, Fore, Style, init
 
-from .lib import auth, lotto645
+from lib import auth, lotto645
+
+### Commands
 
 
 def login(user_id: str, user_pw: str):
@@ -16,6 +18,9 @@ def buy_lotto645(authCtrl: auth.AuthController, cnt: int, mode: str):
     lotto = lotto645.Lotto645()
     _mode = lotto645.Lotto645Mode[mode.upper()]
     lotto.buy_lotto645(authCtrl, cnt, _mode)
+
+
+### Configs
 
 
 def loggerSetup():
@@ -56,6 +61,8 @@ def set_argparse():
     return args
 
 
+### Main
+
 if __name__ == "__main__":
     # loggerSetup()
 
@@ -64,5 +71,3 @@ if __name__ == "__main__":
     if args.category == "lotto645":
         authCtrl = login(args.username, args.password)
         buy_lotto645(authCtrl, args.count, args.mode)
-
-    exit(0)

@@ -36,7 +36,7 @@ class AuthController:
 
         data = self._generate_body(user_id, password)
 
-        res = self._try_login(headers, data)  # 새로운 값의 JSESSIONID가 내려오는데, 이 값으론 로그인 안됨
+        _res = self._try_login(headers, data)  # 새로운 값의 JSESSIONID가 내려오는데, 이 값으론 로그인 안됨
 
         self._update_auth_cred(default_auth_cred)
 
