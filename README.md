@@ -19,7 +19,7 @@ brew install roeniss/dhapi/dhapi
 
 dhapi -h # 도움말 출력
 
-dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
+dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또645를 - 산다 - 5장 - 자동발급으로
 ```
 
 ### etc
