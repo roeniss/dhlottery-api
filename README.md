@@ -2,9 +2,25 @@
 
 [동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
 
-현재 필요한 기능이 [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1) 구매 뿐이라서 해당 부분만 구현되어 있습니다. 만약 다른 기능이 필요하시면 아래 가이드를 따라서 직접 개발하시거나, Github Issues 를 통해 개발 요청을 등록해주시길 바랍니다.
+현재 제게 필요한 기능이 [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1) 구매 뿐이라서 해당 부분만 구현되어 있습니다. 만약 다른 기능이 필요하시면 아래 가이드를 따라서 직접 개발하시거나, Github Issues 를 통해 개발 요청을 등록해주시길 바랍니다.
 
 ## 사용법
+
+### 설치
+
+// TODO
+
+### 커맨드
+
+현재는 `로또6/45`를 `자동`으로 사는 기능뿐입니다. 갯수(`-c`)는 1에서 5사이로 조절할 수 있습니다. 한 주에 5장 이상을 사려고 하면 구매가 되지 않고 적절한 에러 메시지가 출력됩니다.
+
+헷갈리실까봐 사족을 붙이자면, `auto`는 번호를 자동으로 선택하는 그 자동모드를 말하는 것입니다.
+
+```sh
+dhl -h # Help
+
+dhl -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
+```
 
 ## 작동 방식
 
@@ -59,31 +75,31 @@ requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합�
 #### Response body (3 tickets)
 
 ```python
-# result example:
-# {
-#     "loginYn": "Y",
-#     "result": {
-#         "oltInetUserId": "00NNNNNNN",
-#         "issueTime": "hh:mm:ss",
-#         "issueDay": "yyyy/MM/dd",
-#         "resultCode": "100",
-#         "barCode4": "nnnnn",
-#         "barCode5": "nnnnn",
-#         "barCode6": "nnnnn",
-#         "barCode1": "nnnnn",
-#         "barCode2": "nnnnn",
-#         "barCode3": "nnnnn",
-#         "resultMsg": "SUCCESS",
-#         "buyRound": "950",
-#         "arrGameChoiceNum": [
-#             "A|nn|nn|nn|nn|nn|nn3", // TODO: what is '3'?
-#             "B|nn|nn|nn|nn|nn|nn3",
-#             "C|nn|nn|nn|nn|nn|nn3"
-#         ],
-#         "weekDay": "월",
-#         "payLimitDate": None,
-#         "drawDate": None,
-#         "nBuyAmount": 3000
-#     }
-# }
+result example:
+{
+    "loginYn": "Y",
+    "result": {
+        "oltInetUserId": "00NNNNNNN",
+        "issueTime": "hh:mm:ss",
+        "issueDay": "yyyy/MM/dd",
+        "resultCode": "100",
+        "barCode4": "nnnnn",
+        "barCode5": "nnnnn",
+        "barCode6": "nnnnn",
+        "barCode1": "nnnnn",
+        "barCode2": "nnnnn",
+        "barCode3": "nnnnn",
+        "resultMsg": "SUCCESS",
+        "buyRound": "950",
+        "arrGameChoiceNum": [
+            "A|nn|nn|nn|nn|nn|nn3", // TODO: what is '3'?
+            "B|nn|nn|nn|nn|nn|nn3",
+            "C|nn|nn|nn|nn|nn|nn3"
+        ],
+        "weekDay": "월",
+        "payLimitDate": None,
+        "drawDate": None,
+        "nBuyAmount": 3000
+    }
+}
 ```
