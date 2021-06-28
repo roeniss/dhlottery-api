@@ -33,7 +33,7 @@ pylint 수행 결과가 무조건 만점(10.0/10)이 나와야 합니다.
 
 ### 디펜던시 체크
 
-requirements.txt에 포함된 `pipdeptree`로 디펜던시 체크가 가능합니다. 불필요한 의존성을 확인 후 제거할 때 사용합니다.
+`pipdeptree`로 디펜던시 체크가 가능합니다. 불필요한 의존성을 확인 후 제거할 때 사용합니다.
 
 확인 후에는 프리즈합니다.
 
@@ -48,7 +48,7 @@ pip3 freeze > requirements.txt
 ### macOS
 
 ```sh
-pyinstaller src/dhapi/dhapi
+pyinstaller --path .venv/lib/python3.9/site-packages src/dhapi/dhapi.py
 tar -czf dist/dhapi-mac.tar.gz dist/dhapi # (A)
 shasum -a 256 dist/dhapi-mac.tar.gz # (B)
 git tag vM.m.p # (C)

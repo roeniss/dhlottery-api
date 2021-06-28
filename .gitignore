@@ -6,4 +6,4 @@ __pycache__/
 build/
 dhapi.egg-info/
 dist/
-main.spec
+*.spec
