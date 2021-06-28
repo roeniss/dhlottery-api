@@ -49,10 +49,9 @@ pip3 freeze > requirements.txt
 
 ```sh
 pyinstaller --onefile src/dhapi/dhapi
-cd dist
-tar -czf dhapi-mac.tar.gz dhapi # (A)
-shasum -a 256 dhapi-mac.tar.gz # (B)
-git tag vM.m.p
+tar -czf dist/dhapi-mac.tar.gz dist/dhapi # (A)
+shasum -a 256 dist/dhapi-mac.tar.gz # (B)
+git tag vM.m.p # (C)
 git push --tags
 ```
 
@@ -61,7 +60,10 @@ git push --tags
 그후 [homebrew 레포](https://github.com/roeniss/homebrew-dhapi)에서, [Formula/dhapi.rb](https://github.com/roeniss/homebrew-dhapi/blob/main/Formula/dhapi.rb)로 가서
 
 - url에 (A) 파일의 다운로드 링크를,
-- sha256에 (B) 값을 입력 후 커밋, 푸시.
+- sha256에 (B) 값을,
+- version에 tag의 (C) 값을,
+
+입력 후 커밋, 푸시
 
 ### etc
 
