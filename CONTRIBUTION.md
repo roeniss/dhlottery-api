@@ -20,7 +20,9 @@ pip3 install -r requirements.txt
 
 ### 린팅
 
-푸시 전 린팅
+푸시 전 린팅 작업이 필요합니다.
+
+(black, pylint 설치 필요)
 
 ```sh
 black -v .
@@ -43,27 +45,20 @@ pip3 freeze > requirements.txt
 
 ### 배포
 
-현재 배포는 brew를 이용한 macOS 바이너리만 제공합니다.
+pypi를 통해 배포합니다. ([pypi repository](https://pypi.org/project/dhapi/1.0.11/))
 
-### macOS
+(build, setuptools, tween 필요)
+
+`setup.py`에서 'version'을 적절하게 bump합니다.
+
+그런데 pypi 저장소 토큰이 저한테 있으니까 지금은 저만 가능합니다.
 
 ```sh
-pyinstaller --path .venv/lib/python3.9/site-packages src/dhapi/dhapi.py
-tar -czf dist/dhapi-mac.tar.gz dist/dhapi # (A)
-shasum -a 256 dist/dhapi-mac.tar.gz # (B)
-git tag vM.m.p # (C)
-git push --tags
+python3 -m build --sdist &&\
+    python3 -m build --wheel &&\
+    twine check dist/* &&\
+    twine upload dist/*
 ```
-
-이후 레포지토리에서 release 후, (A) 파일을 업로드.
-
-그후 [homebrew 레포](https://github.com/roeniss/homebrew-dhapi)에서, [Formula/dhapi.rb](https://github.com/roeniss/homebrew-dhapi/blob/main/Formula/dhapi.rb)로 가서
-
-- url에 (A) 파일의 다운로드 링크를,
-- sha256에 (B) 값을,
-- version에 tag의 (C) 값을,
-
-입력 후 커밋, 푸시
 
 ### etc
 

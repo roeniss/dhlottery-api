@@ -2,7 +2,7 @@ import argparse
 
 from colorama import Back, Fore, Style, init
 
-from lib import auth, lotto645
+from . import auth, lotto645
 
 ### Commands
 
@@ -63,7 +63,8 @@ def set_argparse():
 
 ### Main
 
-if __name__ == "__main__":
+
+def run():
     # loggerSetup()
 
     args = set_argparse()
@@ -71,3 +72,7 @@ if __name__ == "__main__":
     if args.category == "lotto645":
         authCtrl = login(args.username, args.password)
         buy_lotto645(authCtrl, args.count, args.mode)
+
+
+if __name__ == "__main__":
+    run()

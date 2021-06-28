@@ -10,10 +10,13 @@
 >
 > 한 마디로, **현재 조작할 수 있는 옵션은 `-c` 뿐입니다.**
 
-### macOS
+### Windows, Linux, macOS
+
+macOS 말고 테스트를 안해봐서, 혹 작동하지 않는다면 Issues로 알려주시길 바랍니다.
 
 ```sh
-brew install roeniss/dhapi/dhapi
+
+pip install dhapi # 또는 pip3 install dhapi
 
 # 이후 다음과 같이 사용하면 됩니다
 
@@ -24,7 +27,7 @@ dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또645를 - 산
 
 ### etc
 
-다른 OS는 본 레포를 클론해서 dhapi.py를 실행시키는 방법으로 사용하실 수 있습니다.
+본 레포를 클론해서 dhapi.py를 실행시키는 방법으로도 사용하실 수 있습니다.
 
 ```sh
 git clone https://github.com/roeniss/dhlottery-api
