@@ -6,7 +6,7 @@
 
 ## 설치 및 사용법
 
-> **현재는 `로또645`를 `자동`으로 사는 기능뿐입니다.** 갯수(`-c`)는 1에서 5사이로 조절할 수 있습니다. 한 주에 5장을 초과해서 사려고 하면 구매가 되지 않고 적절한 에러 메시지가 출력됩니다.
+> 현재는 `로또645`를 `자동`으로 사는 기능뿐입니다. 갯수(`-c`)는 1에서 5사이로 조절할 수 있습니다. 한 주에 5장을 초과해서 사려고 하면 구매가 되지 않고 적절한 에러 메시지가 출력됩니다.
 >
 > 한 마디로, **현재 조작할 수 있는 옵션은 `-c` 뿐입니다.**
 
@@ -19,7 +19,7 @@ brew install roeniss/dhapi/dhapi
 
 dhapi -h # 도움말 출력
 
-dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
+dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또645를 - 산다 - 5장 - 자동발급으로
 ```
 
 ### etc
@@ -38,6 +38,6 @@ python3 dhapi -h # 도움말 출력
 python3 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
 ```
 
-### 같이 개발하기
+## 같이 개발하기
 
-기여는 대환영입니다! `CONTRIBUTION.md` 파일을 참고해주세요.
+기여는 대환영입니다! [CONTRIBUTION.md](https://github.com/roeniss/dhlottery-api/blob/main/CONTRIBUTION.md) 파일을 참고해주세요.
