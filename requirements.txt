@@ -1,12 +1,17 @@
 beautifulsoup4==4.9.3
 bs4==0.0.1
+build==0.5.1
 certifi==2021.5.30
 chardet==4.0.0
 colorama==0.4.4
 html5lib==1.1
 idna==2.10
+packaging==20.9
+pep517==0.10.0
+pyparsing==2.4.7
 requests==2.25.1
 six==1.16.0
 soupsieve==2.2.1
+toml==0.10.2
 urllib3==1.26.6
 webencodings==0.5.1

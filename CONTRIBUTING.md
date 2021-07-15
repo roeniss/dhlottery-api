@@ -54,7 +54,8 @@ pypi를 통해 배포합니다. ([pypi repository](https://pypi.org/project/dhap
 그런데 pypi 저장소 토큰이 저한테 있으니까 지금은 저만 가능합니다.
 
 ```sh
-python3 -m build --sdist &&\
+rm -rf dist build &&\
+    python3 -m build --sdist &&\
     python3 -m build --wheel &&\
     twine check dist/* &&\
     twine upload dist/*
