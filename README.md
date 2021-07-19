@@ -43,4 +43,4 @@ python3 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45
 
 ## 같이 개발하기
 
-기여는 대환영입니다! [CONTRIBUTION.md](https://github.com/roeniss/dhlottery-api/blob/main/CONTRIBUTION.md) 파일을 참고해주세요.
+기여는 대환영입니다! [CONTRIBUTING.md](/CONTRIBUTING.md) 파일을 참고해주세요.
