@@ -1,4 +1,5 @@
 import argparse
+import getpass
 
 from colorama import Back, Fore, Style, init
 
@@ -33,25 +34,33 @@ def set_argparse():
     parser = argparse.ArgumentParser(description="동행복권 비공식 API")
 
     parser.add_argument(
-        "-u",
+        "-U",
         "--username",
         required=True,
     )
+
+    class PasswordAction(argparse.Action):
+     def __call__(self, parser, namespace, values, option_string=None):
+         mypass = getpass.getpass()
+         setattr(namespace, self.dest, mypass)
+
     parser.add_argument(
-        "-p",
+        "-P",
         "--password",
         required=True,
+        action=PasswordAction,
+        nargs=0
     )
-    parser.add_argument("-C", "--category", required=True, choices=["lotto645"])
-    parser.add_argument("-t", "--task", required=True, choices=["buy"])
+    parser.add_argument("-K", "--kind", required=True, choices=["lotto645"])
+    parser.add_argument("-T", "--task", required=True, choices=["buy"])
     parser.add_argument(
-        "-c",
+        "-C",
         "--count",
         required=True,
         type=int,
     )
     parser.add_argument(
-        "-m",
+        "-M",
         "--mode",
         required=True,
         choices=["auto"],
@@ -69,7 +78,7 @@ def run():
 
     args = set_argparse()
 
-    if args.category == "lotto645":
+    if args.kind == "lotto645":
         authCtrl = login(args.username, args.password)
         buy_lotto645(authCtrl, args.count, args.mode)
 

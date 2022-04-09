@@ -45,7 +45,7 @@ pip3 freeze > requirements.txt
 
 ### 배포
 
-pypi를 통해 배포합니다. ([pypi repository](https://pypi.org/project/dhapi/1.0.11/))
+pypi를 통해 배포합니다. ([pypi repository](https://pypi.org/project/dhapi/))
 
 (build, setuptools, tween 필요)
 
