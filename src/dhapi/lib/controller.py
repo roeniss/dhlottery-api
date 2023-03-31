@@ -42,14 +42,17 @@ def set_argparse():
 
     class PasswordAction(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
-            mypass = getpass.getpass()
-            setattr(namespace, self.dest, mypass)
+            if values:
+                password = values[0]
+            else:
+                password = getpass.getpass(prompt=self.dest.capitalize() + ': ')
+            setattr(namespace, self.dest, password)
 
     parser.add_argument(
         "-P",
         "--password",
         required=True,
-        # action=PasswordAction,
+        action=PasswordAction,
         nargs='?'
     )
     parser.add_argument("-K", "--kind", required=True, choices=["lotto645"])
