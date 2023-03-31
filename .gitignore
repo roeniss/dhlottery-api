@@ -4,6 +4,6 @@
 __pycache__/
 .DS_Store
 build/
-dhapi.egg-info/
+*.egg-info/
 dist/
 *.spec

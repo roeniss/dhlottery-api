@@ -8,7 +8,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="dhapi",
-    version="1.1.0",
+    version="1.2.1",
     description="DongHaeng Lottery Unofficial API",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -28,16 +28,17 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3 :: Only",
     ],
-    keywords="api,korean,donghaeng",
+    keywords="api,korean,donghaeng,lottery",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.6, <4",
-    install_requires=["colorama", "bs4", "requests", "html5lib"],
     entry_points={
         "console_scripts": [
-            "dhapi=dhapi:main",
+            "dhapi=dhapi.main:main",
         ],
     },
     project_urls={
