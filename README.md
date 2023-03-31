@@ -22,8 +22,10 @@ pip install dhapi # 또는 pip3 install dhapi
 
 dhapi -h # 도움말 출력
 
-dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또645를 - 산다 - 5장 - 자동발급으로
+dhapi -U $YOUR_ID -P -K lotto645 -T buy -M auto -C 5  # 로또645를 - 산다 - 5장 - 자동발급으로
 ```
+
+현재는 아쉽게도 -C 옵션 (1~5개) 말고는 조절할 수 있는 옵션이 없습니다.
 
 ### etc
 
@@ -38,7 +40,7 @@ pip3 install -r requirements.txt # 디펜던시를 전역으로 설치하고 싶
 
 python3 dhapi -h # 도움말 출력
 
-python3 dhapi -u YOUR_ID -p YOUR_PW -C lotto645 -t buy -c 5 -m auto # 로또6/45를 - 산다 - 5장 - 자동발급으로
+dhapi -U $YOUR_ID -P -K lotto645 -T buy -M auto -C  # 로또6/45를 - 산다 - 5장 - 자동발급으로
 ```
 
 ## 같이 개발하기

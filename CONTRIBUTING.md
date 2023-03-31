@@ -66,7 +66,7 @@ rm -rf dist build &&\
 #### Request body for Lotter645 (3 tickets)
 
 ```python
- data = {
+data = {
     "round": 777,
     "direct": "172.17.20.52",
     "nBuyAmount": str(1000 * cnt),

@@ -7,3 +7,5 @@ build/
 dhapi.egg-info/
 dist/
 *.spec
+
+.idea

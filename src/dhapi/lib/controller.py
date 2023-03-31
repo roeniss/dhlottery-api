@@ -1,9 +1,10 @@
 import argparse
 import getpass
 
-from colorama import Back, Fore, Style, init
+from colorama import Fore, Style, init
 
 from . import auth, lotto645
+
 
 ### Commands
 
@@ -40,16 +41,16 @@ def set_argparse():
     )
 
     class PasswordAction(argparse.Action):
-     def __call__(self, parser, namespace, values, option_string=None):
-         mypass = getpass.getpass()
-         setattr(namespace, self.dest, mypass)
+        def __call__(self, parser, namespace, values, option_string=None):
+            mypass = getpass.getpass()
+            setattr(namespace, self.dest, mypass)
 
     parser.add_argument(
         "-P",
         "--password",
         required=True,
-        action=PasswordAction,
-        nargs=0
+        # action=PasswordAction,
+        nargs='?'
     )
     parser.add_argument("-K", "--kind", required=True, choices=["lotto645"])
     parser.add_argument("-T", "--task", required=True, choices=["buy"])

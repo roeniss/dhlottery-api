@@ -89,9 +89,7 @@ class Lotto645:
     def _get_round(self) -> str:
         res = requests.get("https://www.dhlottery.co.kr/common.do?method=main")
         html = res.text
-        soup = BS(
-            html, "html5lib"
-        )  # 'html5lib' : in case that the html don't have clean tag pairs
+        soup = BS(html, "html.parser")
         last_drawn_round = int(soup.find("strong", id="lottoDrwNo").text)
         return str(last_drawn_round + 1)
 
