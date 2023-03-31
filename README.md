@@ -11,7 +11,8 @@
 
 ```sh
 pip install dhapi
-dhapi -U $YOUR_ID -P -K lotto645 -T buy -M auto -C 5  # 로또645를 - 산다 - 자동발급으로 - 5장 
+dhapi -h
+dhapi buy_lotto645 -u $USER_ID -q
 ```
 
 ## 기여하기
