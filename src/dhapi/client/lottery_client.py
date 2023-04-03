@@ -8,6 +8,7 @@ from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 # TODO : LotteryClient 를 한번만 만들어 쓰도록 Singleton/DI 적용
 class LotteryClient:
     _default_session_url = "https://dhlottery.co.kr/gameResult.do?method=byWin&wiselog=H_C_1_1"
+    _system_under_check_url = "https://dhlottery.co.kr/index_check.html"
     _main_url = "https://dhlottery.co.kr/common.do?method=main"
     _login_request_url = "https://www.dhlottery.co.kr/userSsl.do?method=login"
     _buy_lotto645_url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do"
@@ -37,6 +38,9 @@ class LotteryClient:
     #  이 값으로 갱신하면 로그인이 풀리는 듯하여 헤더를 갱신하지 않음
     def _set_default_session(self):
         resp = requests.get(LotteryClient._default_session_url, timeout=10)
+
+        if resp.url == LotteryClient._system_under_check_url:
+            raise FileNotFoundError("동행복권 사이트가 현재 시스템 점검중입니다.")
 
         for cookie in resp.cookies:
             if cookie.name == "JSESSIONID":
