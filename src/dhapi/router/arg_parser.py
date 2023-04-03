@@ -15,7 +15,7 @@ class HelpOnErrorParser(argparse.ArgumentParser):
 class ArgParser:
     def __init__(self):
         parser = HelpOnErrorParser(description="동행복권 비공식 API", formatter_class=argparse.RawTextHelpFormatter)
-        parser.add_argument("-v", "--version", action="version", version="%(prog)s 1.2.1")
+        parser.add_argument("-v", "--version", action="version", version="%(prog)s 1.2.2")
 
         command_subparser = parser.add_subparsers(title="명령어 구분", dest="command", required=True)
 

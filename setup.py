@@ -8,7 +8,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="dhapi",
-    version="1.2.1",
+    version="1.2.2",
     description="DongHaeng Lottery Unofficial API",
     long_description=long_description,
     long_description_content_type="text/markdown",
