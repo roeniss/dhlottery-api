@@ -50,7 +50,7 @@ class LotteryClient:
             raise KeyError("JSESSIONID cookie is not set in response")
 
     def login(self, user_id: str, user_pw: str):
-        requests.post(
+        resp = requests.post(
             LotteryClient._login_request_url,
             headers=self._headers,
             data={
@@ -62,9 +62,9 @@ class LotteryClient:
             },
             timeout=10,
         )
-        # TODO: 로그인 실패해도 여기서 확인하지 않고 (ex. 마이페이지 방문 X),
-        #  이후 로또 구매를 시도할 때나 알게 됨
-        #  로그인 성공 실패를 이 페이즈에서 아는게 바람직하다고 생각함
+        soup = BeautifulSoup(resp.text, "html5lib")
+        if soup.find('a', {'class': 'btn_common'}) is not None:
+            raise ValueError("로그인에 실패했습니다. \n아이디 또는 비밀번호를 확인해주세요.\n아이디는 대소문자를 구분합니다.")
 
     def _get_round(self):
         resp = requests.get(self._round_info_url, timeout=10)

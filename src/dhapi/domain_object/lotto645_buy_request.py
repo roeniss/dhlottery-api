@@ -19,10 +19,10 @@ class Lotto645BuyRequest:
 
     def _is_correct_game(self, game):
         return game is None or (
-            isinstance(game, list)
-            and len(game) == 6
-            and (len(set(filter(lambda x: x != "*", game))) == len(list(filter(lambda x: x != "*", game))))
-            and all(map(lambda x: x == "*" or 1 <= x <= 45, game))
+                isinstance(game, list)
+                and (len(game) == 6 or len(game) == 1)
+                and (len(set(filter(lambda x: x != "*", game))) == len(list(filter(lambda x: x != "*", game))))
+                and all(map(lambda x: x == "*" or 1 <= x <= 45, game))
         )
 
     def has_auto_game(self):
@@ -35,7 +35,8 @@ class Lotto645BuyRequest:
         return any(filter(lambda game: self._is_half_auto_game(game), self._filter_used_games()))
 
     def _is_half_auto_game(self, game):
-        return 0 < self._get_auto_count_in_game(game) < 6
+        return 0 < self._get_auto_count_in_game(game) < 6 \
+            and (self._get_auto_count_in_game(game) != 1)
 
     def has_manual_game(self):
         return any(filter(lambda game: self._is_manual_game(game), self._filter_used_games()))
