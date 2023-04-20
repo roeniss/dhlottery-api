@@ -35,10 +35,6 @@ class Lotto645Controller:
 
     # ID가 다른 경우 loginYn이 N으로 나옴
     def _show_result(self, body: dict) -> None:
-        if body.get("loginYn") != "Y":
-            print("Fail to purchase (reason: not logged in)")
-            return
-
         result = body.get("result", {})
         if result.get("resultMsg", "FAILURE").upper() != "SUCCESS":
             print(f'Fail to purchase (reason: {result.get("resultMsg", f"Unknown (resultMsg field is empty. full response: {body})")})')
