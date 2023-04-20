@@ -27,9 +27,9 @@ class ArgParser:
 [buy_lotto645 명령어 사용 예시]
     
 dhapi buy_lotto645 -u $USER_ID -q  # 확인 절차 없이 자동으로 5장 구매
-dhapi buy_lotto645 -u $USER_ID -p $USER_PW -g *  # 자동으로 1장 구매
 dhapi buy_lotto645 -u $USER_ID -p $USER_PW -g *,*,*,*,*,*  # 자동으로 1장 구매
-dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 11,12,13,16,17,18 -g 5,6,7,*,*,* -g *,*,*,*,*,*  # 2장 수동, 1장 반자동, 1장 자동 - 총 4장 구매
+dhapi buy_lotto645 -u $USER_ID -p $USER_PW -g *  # 자동으로 1장 구매 (단축형)
+dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 5,6,7,*,*,* -g *,*,*,*,*,* -g *  # 1장 수동, 1장 반자동, 2장 자동 - 총 4장 구매
 """,
         )
 

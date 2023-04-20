@@ -4,9 +4,9 @@ import json
 class Lotto645BuyRequest:
     def __init__(self, games=None):
         """
-        :param 게임은 다섯개의 list 로 이루어져 있다. 각 게임은 여섯 칸 짜리 list 로 이루어져 있다. 각 칸은 1~45 의 숫자 또는 '자동'을 의미하는 "*" 를 사용한다.
+        :param 게임은 다섯 개의 list 로 이루어져 있다. 각 게임은 여섯 칸 짜리 list 로 이루어져 있다. 각 칸은 1~45 의 숫자 또는 '자동'을 의미하는 "*" 를 사용한다.
          Asterisk("*") can be to indicate auto mode for that position.
-         e.g. [["*", "*", "*", "*", "*"], ["*", "*", "*", "*", "*"], [1, 2, 3, 4, 15, 45], None, [3, 5, "*", "*", "*"]]
+         e.g. [["*", "*", "*", "*", "*"], ["*"], [1, 2, 3, 4, 15, 45], None, [3, 5, "*", "*", "*"]]
          - This example shows two auto games, one manual game, one half-auto game and forth game is not used.
         """
         self._games = games
@@ -19,10 +19,10 @@ class Lotto645BuyRequest:
 
     def _is_correct_game(self, game):
         return game is None or (
-                isinstance(game, list)
-                and (len(game) == 6 or len(game) == 1)
-                and (len(set(filter(lambda x: x != "*", game))) == len(list(filter(lambda x: x != "*", game))))
-                and all(map(lambda x: x == "*" or 1 <= x <= 45, game))
+            isinstance(game, list)
+            and (len(game) == 6 or len(game) == 1)
+            and (len(set(filter(lambda x: x != "*", game))) == len(list(filter(lambda x: x != "*", game))))
+            and all(map(lambda x: x == "*" or 1 <= x <= 45, game))
         )
 
     def has_auto_game(self):
@@ -35,8 +35,7 @@ class Lotto645BuyRequest:
         return any(filter(lambda game: self._is_half_auto_game(game), self._filter_used_games()))
 
     def _is_half_auto_game(self, game):
-        return 0 < self._get_auto_count_in_game(game) < 6 \
-            and (self._get_auto_count_in_game(game) != 1)
+        return 0 < self._get_auto_count_in_game(game) < 6 and (self._get_auto_count_in_game(game) != 1)
 
     def has_manual_game(self):
         return any(filter(lambda game: self._is_manual_game(game), self._filter_used_games()))

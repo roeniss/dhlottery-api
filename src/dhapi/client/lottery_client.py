@@ -63,7 +63,7 @@ class LotteryClient:
             timeout=10,
         )
         soup = BeautifulSoup(resp.text, "html5lib")
-        if soup.find('a', {'class': 'btn_common'}) is not None:
+        if soup.find("a", {"class": "btn_common"}) is not None:
             raise ValueError("로그인에 실패했습니다. \n아이디 또는 비밀번호를 확인해주세요.\n아이디는 대소문자를 구분합니다.")
 
     def _get_round(self):

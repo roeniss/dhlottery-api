@@ -1,6 +1,6 @@
+import sys
 from dhapi.purchase.lotto645_controller import Lotto645Controller
 from dhapi.router.arg_parser import ArgParser
-import sys
 
 
 def entrypoint():
