@@ -22,23 +22,19 @@ class Lotto645Controller:
     def _confirm_purchase(self, req, quiet):
         print(
             f"""{req.format()}
-위와 같이 구매하시겠습니까? [Y/n] """,
+위와 같이 구매하시겠습니까? [[Y]/n] """,
             end="",
         )
 
         if quiet:
-            print("quiet 플래그가 주어져 자동으로 구매를 진행합니다.")
+            print("\nquiet 플래그가 주어져 자동으로 구매를 진행합니다.")
             return True
         else:
             answer = input().strip().lower()
             return answer in ["y", "yes", ""]
 
-    # TODO: 이쪽은 전혀 보지 못함
+    # ID가 다른 경우 loginYn이 N으로 나옴
     def _show_result(self, body: dict) -> None:
-        if body.get("loginYn") != "Y":
-            print("Fail to purchase (reason: not logged in)")
-            return
-
         result = body.get("result", {})
         if result.get("resultMsg", "FAILURE").upper() != "SUCCESS":
             print(f'Fail to purchase (reason: {result.get("resultMsg", f"Unknown (resultMsg field is empty. full response: {body})")})')
@@ -57,6 +53,7 @@ Body: {body}
         )
 
     def _format_lotto_numbers(self, numbers: list) -> None:
-        tabbed_numbers = ["\t\t" + number for number in numbers]  # TODO: what is trailing '3' in each number?
+        # Manual : 1, Combine : 2, Automatic : 3
+        tabbed_numbers = ["\t\t" + number for number in numbers]
         linebroken_tabbed_numbers = "\n".join(tabbed_numbers)
         return linebroken_tabbed_numbers

@@ -65,7 +65,7 @@ data = {
         "resultMsg": "SUCCESS",
         "buyRound": "950",
         "arrGameChoiceNum": [
-            "A|nn|nn|nn|nn|nn|nn3",  # ...'3'?
+            "A|nn|nn|nn|nn|nn|nn3",  # Manual : 1, Combine : 2, Automatic : 3
             "B|nn|nn|nn|nn|nn|nn3",
             "C|nn|nn|nn|nn|nn|nn3"
         ],

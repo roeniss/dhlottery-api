@@ -1,8 +1,10 @@
+import sys
 from dhapi.purchase.lotto645_controller import Lotto645Controller
 from dhapi.router.arg_parser import ArgParser
 
 
 def entrypoint():
+    sys.tracebacklimit = 0
     arg_parser = ArgParser()
 
     if arg_parser.is_buylotto645():
