@@ -1,8 +1,11 @@
 import json
+import logging
 import requests
 from bs4 import BeautifulSoup
 
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
+
+logger = logging.getLogger(__name__)
 
 
 # TODO : LotteryClient 를 한번만 만들어 쓰도록 Singleton/DI 적용
@@ -38,16 +41,18 @@ class LotteryClient:
     #  이 값으로 갱신하면 로그인이 풀리는 듯하여 헤더를 갱신하지 않음
     def _set_default_session(self):
         resp = requests.get(LotteryClient._default_session_url, timeout=10)
+        logger.debug(f"resp.status_code: {resp.status_code}")
+        logger.debug(f"resp.headers: {resp.headers}")
 
         if resp.url == LotteryClient._system_under_check_url:
-            raise FileNotFoundError("동행복권 사이트가 현재 시스템 점검중입니다.")
+            raise RuntimeError("동행복권 사이트가 현재 시스템 점검중입니다.")
 
         for cookie in resp.cookies:
             if cookie.name == "JSESSIONID":
                 self._headers["Cookie"] = f"JSESSIONID={cookie.value}"
                 break
         else:
-            raise KeyError("JSESSIONID cookie is not set in response")
+            raise RuntimeError("JSESSIONID 쿠키가 정상적으로 세팅되지 않았습니다.")
 
     def login(self, user_id: str, user_pw: str):
         resp = requests.post(
@@ -64,7 +69,7 @@ class LotteryClient:
         )
         soup = BeautifulSoup(resp.text, "html5lib")
         if soup.find("a", {"class": "btn_common"}) is not None:
-            raise ValueError("로그인에 실패했습니다. \n아이디 또는 비밀번호를 확인해주세요.\n아이디는 대소문자를 구분합니다.")
+            raise RuntimeError("로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.")
 
     def _get_round(self):
         resp = requests.get(self._round_info_url, timeout=10)
