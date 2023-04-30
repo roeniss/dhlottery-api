@@ -1,5 +1,7 @@
 import argparse
+import pathlib
 import getpass
+import os
 import sys
 
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
@@ -10,6 +12,11 @@ class HelpOnErrorParser(argparse.ArgumentParser):
         sys.stderr.write(f"error: {message}\n")
         self.print_help()
         sys.exit(2)
+
+
+def _exit(message):
+    obj = HelpOnErrorParser()
+    obj.error(message)
 
 
 class ArgParser:
@@ -40,13 +47,7 @@ dhapi buy_lotto645 -p $PROFILE_FILE # 프로필 파일을 지정해 USER_ID, USE
 
         buy_lotto645.formatter_class = argparse.RawTextHelpFormatter
 
-        buy_lotto645.add_argument("-u", "--username", required=True, help="동행복권 아이디")
-        buy_lotto645.add_argument(
-            "-p",
-            "--password",
-            required=False,
-            help="동행복권 비밀번호 (값을 입력하지 않으면 실행 후 비밀번호를 입력받음)",
-        )
+        buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디")  # deprecated
         buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다")  # "store_true" means "set default to False"
         buy_lotto645.add_argument(
             "-g",
@@ -57,15 +58,30 @@ dhapi buy_lotto645 -p $PROFILE_FILE # 프로필 파일을 지정해 USER_ID, USE
             help="""
 구매할 번호 6개를 콤마로 구분해 입력합니다.
 옵션을 여러번 사용하여 여러 게임을 구매할 수 있습니다 (매주 최대 5 게임).
-'-g *,*,*,*,*,*' 또는 '-g *' 형태로 제시하면 해당 게임의 모든 번호를 자동으로 선택합니다 (자동 모드). 
-특정 숫자 대신 '*'를 입력해 해당 값만 자동으로 구매할 수 있습니다 (반자동 모드).
+'-g x,x,x,x,x,x' 또는 '-g x' 형태로 제시하면 해당 게임의 모든 번호를 자동으로 선택합니다 (자동 모드).
+특정 숫자 대신 'x'를 입력해 해당 값만 자동으로 구매할 수 있습니다 (반자동 모드).
 옵션을 아예 입력하지 않으면 '자동으로 5장 구매'를 수행합니다.""",
         )
-
+        buy_lotto645.add_argument(
+            "-p",
+            "--profile",
+            required=False,
+            nargs="?",
+            const="~/.dhapi_profile",
+            default="~/.dhapi_profile",
+            help="파일을 통해 ID/PW를 입력 (경로 생략 시 ~/.dhapi_profile 파일을 사용, 포맷은 README.md 참고)",
+        )
         self._args = parser.parse_args()
 
-        if self._args.password is None:
+        if not self._args.username is None:
             self._args.password = getpass.getpass("비밀번호를 입력하세요: ")
+        else:
+            profile_path = pathlib.Path(self._args.profile).expanduser()
+            if not (os.path.exists(profile_path) and os.path.isfile(profile_path)):
+                _exit(f"{self._args.profile} 파일이 존재하지 않습니다")
+
+            with open(profile_path, encoding="utf-8") as f:
+                self._args.username, self._args.password = f.read().splitlines()
 
         if self.is_buylotto645():
             self.normalize_games_for_lotto645()
