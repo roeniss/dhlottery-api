@@ -11,3 +11,4 @@ disable=
 
 [FORMAT]
 max-line-length=180
+good-names=i,j,k,f

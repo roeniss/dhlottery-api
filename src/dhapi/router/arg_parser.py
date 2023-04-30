@@ -23,13 +23,18 @@ class ArgParser:
             "buy_lotto645",
             help="로또6/45 구매",
             epilog="""
- 
+
 [buy_lotto645 명령어 사용 예시]
-    
-dhapi buy_lotto645 -u $USER_ID -q  # 확인 절차 없이 자동으로 5장 구매
-dhapi buy_lotto645 -u $USER_ID -p $USER_PW -g *,*,*,*,*,*  # 자동으로 1장 구매
-dhapi buy_lotto645 -u $USER_ID -p $USER_PW -g *  # 자동으로 1장 구매 (단축형)
-dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 5,6,7,*,*,* -g *,*,*,*,*,* -g *  # 1장 수동, 1장 반자동, 2장 자동 - 총 4장 구매
+
+dhapi buy_lotto645 -q  # 확인 절차 없이 자동으로 5장 구매 (quiet mode)
+dhapi buy_lotto645 -u $USER_ID -q  # ID/PW 를 직접 입력받고, 확인 절차 없이 자동으로 5장 구매 (quiet mode)
+
+dhapi buy_lotto645 -g x,x,x,x,x,x  # 자동으로 1장 구매 (1 game)
+dhapi buy_lotto645 -g x  # 자동으로 1장 구매 (단축형)
+
+dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 5,6,7,x,x,x -g x,x,x,x,x,x -g x  # 1장 수동, 1장 반자동, 2장 자동
+
+dhapi buy_lotto645 -p $PROFILE_FILE # 프로필 파일을 지정해 USER_ID, USER_PW 입력 (프로필 파일 포맷은 README.md 참고)
 """,
         )
 
@@ -79,7 +84,7 @@ dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 5,6,7,*,*,* -g *,*,*,*,*,* -g *
 
     def normalize_games_for_lotto645(self):
         if self._args.games is None:
-            self._args.games = ["*,*,*,*,*,*" for _ in range(5)]
+            self._args.games = ["x,x,x,x,x,x" for _ in range(5)]
         else:
             while len(self._args.games) < 5:
                 self._args.games.append(None)
@@ -92,7 +97,7 @@ dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 5,6,7,*,*,* -g *,*,*,*,*,* -g *
                 req_slot = []
                 nums_and_asterisks = game.split(",")
                 for i in nums_and_asterisks:
-                    if i == "*":
+                    if i == "x":
                         req_slot.append(i)
                     else:
                         req_slot.append(int(i))
