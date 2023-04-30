@@ -28,13 +28,13 @@ class Lotto645BuyRequest:
         return any(filter(lambda game: self._is_auto_game(game), self._filter_used_games()))
 
     def _is_auto_game(self, game):
-        return self._get_auto_count_in_game(game) == 6
+        return (len(game) == 6 and self._get_auto_count_in_game(game) == 6) or (len(game) == 1 and self._get_auto_count_in_game(game) == 1)
 
     def has_half_auto_game(self):
         return any(filter(lambda game: self._is_half_auto_game(game), self._filter_used_games()))
 
     def _is_half_auto_game(self, game):
-        return 0 < self._get_auto_count_in_game(game) < 6 and (self._get_auto_count_in_game(game) != 1)
+        return len(game) == 6 and 0 < self._get_auto_count_in_game(game) < 6 and (self._get_auto_count_in_game(game) != 1)
 
     def has_manual_game(self):
         return any(filter(lambda game: self._is_manual_game(game), self._filter_used_games()))
