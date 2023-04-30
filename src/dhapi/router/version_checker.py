@@ -12,12 +12,20 @@ PACKAGE_NAME = "dhapi"
 def _upgrade():
     call("pip install --upgrade " + PACKAGE_NAME, shell=True)
 
+def get_versions():
+    """
+    :return (installed_version, latest_version)
+    """
+    dist = JohnnyDist(PACKAGE_NAME)
+    return dist.version_installed, dist.version_latest
+
+
 
 def suggest_upgrade():
-    dist = JohnnyDist(PACKAGE_NAME)
-    if version.parse(dist.version_installed) != version.parse(dist.version_latest):
+    installed_version, latest_version = get_versions()
+    if version.parse(installed_version) != version.parse(latest_version):
         print(
-            f"""현재 설치된 버전은 최신 버전이 아닙니다. (현재 버전: {dist.version_installed} / 최신 버전: {dist.version_latest})
+            f"""현재 설치된 버전은 최신 버전이 아닙니다. (현재 버전: {installed_version} / 최신 버전: {latest_version})
 최신 버전을 설치하겠습니까? [Y/n] """,
             end="",
         )
