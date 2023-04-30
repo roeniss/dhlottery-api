@@ -6,12 +6,29 @@
 
 동행복권 사이트는 `JSESSIONID`를 이용하여 유저를 인증합니다. 본 API에서는 `requests`를 이용해 로그인한 후 `JSESSIONID`를 메모리에 저장해 복권 구매에 활용합니다.
 
-
 ### 모듈 구조
 
 main.py -> router -> 요청에 따른 특정 controller -> client (동행복권 사이트 호출)
 
 router, client, controller 가 모두 domain_object 에 의존하는 형태입니다.
+
+### 트러블슈팅 가이드
+
+#### main.py 가 실행이 안될 때
+
+`PYTHONPATH`를 아래와 같이 지정해보세요.
+
+```sh
+PYTHONPATH=./src/ python3 src/dhapi/main.py buy_lotto645 -u $USER_ID -q
+```
+
+### PR 전 확인사항
+
+아래 명령어를 통하여 컨벤션을 준수하는지 확인합니다.
+
+```sh
+make lintfmt
+```
 
 ### 배포
 
