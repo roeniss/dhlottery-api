@@ -6,7 +6,7 @@ HERE = pathlib.Path(__file__).parent.resolve()
 
 
 def _get_dependencies():
-    with open(HERE + "/requirements.txt") as f:
+    with open(HERE / "requirements.txt") as f:
         return f.read().splitlines()
 
 
