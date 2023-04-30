@@ -15,7 +15,7 @@ clean:
 
 
 lintfmt:
-	black -v src/**
+	black src/**
 	pylint src
 
 .PHONY : lintfmt
