@@ -81,7 +81,7 @@ class LotteryClient:
         """
         :param first 첫 번째 복권 게임을 의미한다. 다음 두 가지 형태 중 하나를 가진다.
          - 일반 숫자 5개와 보너스 숫자를 포함하는 list ([1, 2, 3, 4, 5, 6]) (각각 1~45)
-         - 자동 또는 반자동을 의미하는 str ("AUTO", "HALF_AUTO")
+         - 자동 또는 반자동을 의미하는 str ("AUTO", "SEMI_AUTO")
          위 내용은 second, third, fourth, fifth 파라미터에도 적용된다.
         """
 

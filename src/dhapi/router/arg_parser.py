@@ -40,11 +40,9 @@ dhapi buy_lotto645 -q
 \t\t\t# 확인 절차 없이 자동모드로 5장 구매
 dhapi buy_lotto645 -u $USER_ID
 \t\t\t# ID/PW 를 직접 입력받아 자동모드로 5장 구매 (deprecated)
-dhapi buy_lotto645 -g x,x,x,x,x,x
+dhapi buy_lotto645 -g
 \t\t\t# 자동모드로 1장 구매 (1 game)
-dhapi buy_lotto645 -g x
-\t\t\t# 자동모드로 1장 구매 (단축형)
-dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7,x,x,x -g x,x,x,x,x,x -g x
+dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
 \t\t\t# 1장 수동모드, 1장 반자동모드, 2장 자동모드
 
 """,
@@ -60,11 +58,13 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7,x,x,x -g x,x,x,x,x,x -g x
             required=False,
             action="append",
             dest="games",
+            nargs="?",
+            const=None,
             help="""
 구매할 번호 6개를 콤마로 구분해 입력합니다.
 옵션을 여러번 사용하여 여러 게임을 구매할 수 있습니다 (매주 최대 5 게임).
-'-g x,x,x,x,x,x' 또는 '-g x' 형태로 제시하면 해당 게임의 모든 번호를 자동으로 선택합니다 (자동 모드).
-특정 숫자 대신 'x'를 입력해 해당 값만 자동으로 구매할 수 있습니다 (반자동 모드).
+'-g' 형태로 제시하면 해당 게임의 모든 번호를 자동으로 선택합니다 (자동 모드).
+6개 미만의 번호를 입력하면 나머지 번호는 자동으로 구매할 수 있습니다 (반자동 모드).
 옵션을 아예 입력하지 않으면 '자동으로 5장 구매'를 수행합니다.""",
         )
         buy_lotto645.add_argument(
@@ -108,24 +108,11 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7,x,x,x -g x,x,x,x,x,x -g x
 
     def normalize_games_for_lotto645(self):
         if self._args.games is None:
-            self._args.games = ["x,x,x,x,x,x" for _ in range(5)]
-        else:
-            while len(self._args.games) < 5:
-                self._args.games.append(None)
+            self._args.games = [None for _ in range(5)]
 
         req_bucket = []
         for game in self._args.games:
-            if game is None:
-                req_bucket.append(game)
-            else:
-                req_slot = []
-                nums_and_asterisks = game.split(",")
-                for i in nums_and_asterisks:
-                    if i == "x":
-                        req_slot.append(i)
-                    else:
-                        req_slot.append(int(i))
-                req_bucket.append(req_slot)
+            req_bucket.append([] if game is None else [*map(int, game.split(","))])
 
         self._args.games = req_bucket
 

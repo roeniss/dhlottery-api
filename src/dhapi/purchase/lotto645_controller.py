@@ -12,9 +12,6 @@ class Lotto645Controller:
         self.client.login(user_id, user_pw)
 
     def buy(self, req: Lotto645BuyRequest, quiet: bool):
-        if req.has_half_auto_game():
-            raise NotImplementedError("반자동 입력은 아직 구현되지 않았습니다. 필요하시면 이슈를 남겨주세요.")
-
         if not self._confirm_purchase(req, quiet):
             print("✅ 구매를 취소했습니다.")
         else:
