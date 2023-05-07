@@ -54,9 +54,9 @@ Body: {body}
 
     def _format_lotto_numbers(self, lines: list) -> None:
         modes = {
-            1: "수동",
-            2: "반자동",
-            3: "자동",
+            "1": "수동",
+            "2": "반자동",
+            "3": "자동",
         }
 
         tabbed_lines = []
