@@ -52,8 +52,15 @@ Body: {body}
 ------------------"""
         )
 
-    def _format_lotto_numbers(self, numbers: list) -> None:
-        # Manual : 1, Combine : 2, Automatic : 3
-        tabbed_numbers = ["\t\t" + number for number in numbers]
-        linebroken_tabbed_numbers = "\n".join(tabbed_numbers)
-        return linebroken_tabbed_numbers
+    def _format_lotto_numbers(self, lines: list) -> None:
+        modes = {
+            1: "수동",
+            2: "반자동",
+            3: "자동",
+        }
+
+        tabbed_lines = []
+        for _, line in enumerate(lines):
+            tabbed_lines.append(f"\t\t{line[:-1]} ({modes[line[-1]]})")
+
+        return "\n".join(tabbed_lines)
