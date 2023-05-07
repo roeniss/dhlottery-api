@@ -12,13 +12,13 @@ PACKAGE_NAME = "dhapi"
 def _upgrade():
     call("pip install --upgrade " + PACKAGE_NAME, shell=True)
 
+
 def get_versions():
     """
     :return (installed_version, latest_version)
     """
     dist = JohnnyDist(PACKAGE_NAME)
     return dist.version_installed, dist.version_latest
-
 
 
 def suggest_upgrade():
