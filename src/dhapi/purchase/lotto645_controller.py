@@ -24,7 +24,7 @@ class Lotto645Controller:
     def _confirm_purchase(self, req, quiet):
         print(
             f"""{req.format()}
-❓ 위와 같이 구매하시겠습니까? [[Y]/n] """,
+❓ 위와 같이 구매하시겠습니까? [Y/n] """,
             end="",
         )
 
