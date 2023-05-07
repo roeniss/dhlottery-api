@@ -2,6 +2,7 @@ import argparse
 import getpass
 import sys
 
+from dhapi.router.version_checker import get_versions
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 
 
@@ -15,7 +16,8 @@ class HelpOnErrorParser(argparse.ArgumentParser):
 class ArgParser:
     def __init__(self):
         parser = HelpOnErrorParser(description="동행복권 비공식 API", formatter_class=argparse.RawTextHelpFormatter)
-        parser.add_argument("-v", "--version", action="version", version="%(prog)s 1.3.1")
+        installed_version, _ = get_versions()
+        parser.add_argument("-v", "--version", action="version", version="%(prog)s " + installed_version)
 
         command_subparser = parser.add_subparsers(title="명령어 구분", dest="command", required=True)
 
