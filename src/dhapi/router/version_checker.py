@@ -1,5 +1,5 @@
-from packaging import version
 from subprocess import call
+from packaging import version
 
 from johnnydep.lib import JohnnyDist
 from johnnydep import logs
