@@ -1,15 +1,12 @@
-import sys
 from dhapi.purchase.lotto645_controller import Lotto645Controller
 from dhapi.router.arg_parser import ArgParser
-from dhapi.router.version_checker import suggest_upgrade
+from dhapi.configuration.logger import set_logger
 
 
 def entrypoint():
-    sys.tracebacklimit = 0
-
-    suggest_upgrade()
-
     arg_parser = ArgParser()
+
+    set_logger(arg_parser.get_is_debug())
 
     if arg_parser.is_buylotto645():
         ctrl = Lotto645Controller(arg_parser.get_user_id(), arg_parser.get_user_pw())

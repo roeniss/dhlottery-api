@@ -11,7 +11,7 @@ class Lotto645BuyRequest:
         self._games = games
 
         if not self._is_correct_games(games):
-            raise ValueError(f"비정상적인 입력값입니다. {self.format()}")
+            raise RuntimeError(f"비정상적인 구매 요청입니다.\n{self.format()}")
 
     def _is_correct_games(self, games):
         return isinstance(games, list) and len(games) == 5 and all(map(lambda x: self._is_correct_game(x), games))
@@ -28,13 +28,13 @@ class Lotto645BuyRequest:
         return any(filter(lambda game: self._is_auto_game(game), self._filter_used_games()))
 
     def _is_auto_game(self, game):
-        return self._get_auto_count_in_game(game) == 6
+        return (len(game) == 6 and self._get_auto_count_in_game(game) == 6) or (len(game) == 1 and self._get_auto_count_in_game(game) == 1)
 
     def has_half_auto_game(self):
         return any(filter(lambda game: self._is_half_auto_game(game), self._filter_used_games()))
 
     def _is_half_auto_game(self, game):
-        return 0 < self._get_auto_count_in_game(game) < 6 and (self._get_auto_count_in_game(game) != 1)
+        return len(game) == 6 and 0 < self._get_auto_count_in_game(game) < 6 and (self._get_auto_count_in_game(game) != 1)
 
     def has_manual_game(self):
         return any(filter(lambda game: self._is_manual_game(game), self._filter_used_games()))
@@ -53,21 +53,13 @@ class Lotto645BuyRequest:
         return list(filter(lambda x: x is not None, self._games))
 
     def format(self):
-        return (
-            f"""
-[Lotto645 Buy Request]
-Input: {self._games}            
-"""
-            if self._games is None
-            else f"""
-[Lotto645 Buy Request]
+        return f"""[Lotto645 Buy Request]
 Game A: {self._games[0]}
 Game B: {self._games[1]}
 Game C: {self._games[2]}
 Game D: {self._games[3]}
 Game E: {self._games[4]}
-"""
-        )
+----------------------"""
 
     def create_dhlottery_request_param(self):
         params = []

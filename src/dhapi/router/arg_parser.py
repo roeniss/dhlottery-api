@@ -10,9 +10,8 @@ from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 
 class HelpOnErrorParser(argparse.ArgumentParser):
     def error(self, message):
-        sys.stderr.write(f"error: {message}\n")
-        self.print_help()
-        sys.exit(2)
+        sys.stderr.write(f"🚨 입력 파라미터 에러 발생: {message}\n")
+        sys.exit(1)
 
 
 def _exit(message):
@@ -35,22 +34,26 @@ class ArgParser:
 
 [buy_lotto645 명령어 사용 예시]
 
-dhapi buy_lotto645 -q  # 확인 절차 없이 자동으로 5장 구매 (quiet mode)
-dhapi buy_lotto645 -u $USER_ID -q  # ID/PW 를 직접 입력받고, 확인 절차 없이 자동으로 5장 구매 (quiet mode)
+dhapi buy_lotto645
+\t\t\t# ~/.dhapi_profile 을 읽어 ID/PW 를 자동으로 입력받고, 확인 후 자동모드로 5장 구매 (프로필 파일 포맷은 README.md 참고)
+dhapi buy_lotto645 -q
+\t\t\t# 확인 절차 없이 자동모드로 5장 구매
+dhapi buy_lotto645 -u $USER_ID
+\t\t\t# ID/PW 를 직접 입력받아 자동모드로 5장 구매 (deprecated)
+dhapi buy_lotto645 -g x,x,x,x,x,x
+\t\t\t# 자동모드로 1장 구매 (1 game)
+dhapi buy_lotto645 -g x
+\t\t\t# 자동모드로 1장 구매 (단축형)
+dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7,x,x,x -g x,x,x,x,x,x -g x
+\t\t\t# 1장 수동모드, 1장 반자동모드, 2장 자동모드
 
-dhapi buy_lotto645 -g x,x,x,x,x,x  # 자동으로 1장 구매 (1 game)
-dhapi buy_lotto645 -g x  # 자동으로 1장 구매 (단축형)
-
-dhapi buy_lotto645 -u $USER_ID -g 1,2,3,4,5,6 -g 5,6,7,x,x,x -g x,x,x,x,x,x -g x  # 1장 수동, 1장 반자동, 2장 자동
-
-dhapi buy_lotto645 -p $PROFILE_FILE # 프로필 파일을 지정해 USER_ID, USER_PW 입력 (프로필 파일 포맷은 README.md 참고)
 """,
         )
 
         buy_lotto645.formatter_class = argparse.RawTextHelpFormatter
 
-        buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디")  # deprecated
-        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다")  # "store_true" means "set default to False"
+        buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디입니다. (deprecated; -p 옵션 사용 권장)")
+        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
         buy_lotto645.add_argument(
             "-g",
             "--game",
@@ -68,11 +71,11 @@ dhapi buy_lotto645 -p $PROFILE_FILE # 프로필 파일을 지정해 USER_ID, USE
             "-p",
             "--profile",
             required=False,
-            nargs="?",
-            const="~/.dhapi_profile",
+            nargs=1,
             default="~/.dhapi_profile",
-            help="파일을 통해 ID/PW를 입력 (경로 생략 시 ~/.dhapi_profile 파일을 사용, 포맷은 README.md 참고)",
+            help="프로필 파일 절대경로입니다. (default: ~/.dhapi_profile; 포맷은 README.md 참고)",
         )
+        buy_lotto645.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
         self._args = parser.parse_args()
 
         if not self._args.username is None:
@@ -87,6 +90,9 @@ dhapi buy_lotto645 -p $PROFILE_FILE # 프로필 파일을 지정해 USER_ID, USE
 
         if self.is_buylotto645():
             self.normalize_games_for_lotto645()
+
+    def get_is_debug(self):
+        return self._args.debug
 
     def get_user_id(self):
         return self._args.username
