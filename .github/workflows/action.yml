@@ -16,17 +16,16 @@ jobs:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
       - run: pip install -r requirements.txt
-    
-    - name: Install python package
-      run: |        
-        pip install dhapi
+      - name: Install python package
+        run: |        
+          pip install dhapi
           
-    - name: Run!      
-      run: |        
-        dhapi buy_lotto645 -q
-      env:
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+      - name: Run!      
+        run: |        
+          dhapi buy_lotto645 -q
+        env:
+            USERNAME: ${{ secrets.USERNAME }}
+            PASSWORD: ${{ secrets.PASSWORD }}
       #    COUNT: ${{ secrets.COUNT }}
      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       #    DISCORD_WEBHOOK_URL:  ${{ secrets.DISCORD_WEBHOOK_URL }}
