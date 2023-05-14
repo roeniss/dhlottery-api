@@ -23,7 +23,7 @@ jobs:
           
     - name: Run!      
       run: |        
-        dhapi buy_lotto645
+        dhapi buy_lotto645 -q
       env:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
