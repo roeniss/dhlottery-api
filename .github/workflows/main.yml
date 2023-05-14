@@ -1,0 +1,28 @@
+name: Lotto Buy Bot (로또 구매봇)
+
+#on: [push]
+on:
+  schedule:
+    - cron: '55 23 * * 5' # UST 기준의 크론. UST 23:55 는 KST 08:55
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install python package
+      run: |        
+        pip install dhapi
+          
+    - name: Run!      
+      run: |        
+        dh_api buy_lotto645 -u zihado -p INGlife2019@   
