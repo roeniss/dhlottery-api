@@ -1,5 +1,34 @@
 # DongHaeng Lottery API (Unofficial)
 
+```sh
+❯❯❯ dhapi buy_lotto645
+
+[Lotto645 Buy Request]
+Game A: ['x', 'x', 'x', 'x', 'x', 'x']
+Game B: ['x', 'x', 'x', 'x', 'x', 'x']
+Game C: ['x', 'x', 'x', 'x', 'x', 'x']
+Game D: ['x', 'x', 'x', 'x', 'x', 'x']
+Game E: ['x', 'x', 'x', 'x', 'x', 'x']
+----------------------
+❓ 위와 같이 구매하시겠습니까? [Y/n] y
+✅ 구매를 완료하였습니다.
+[Lotto645 Buy Response]
+------------------
+Round:		1068
+Barcode:	54095 53510 29208 58505 11515 12578
+Cost:		5000
+Numbers:
+		A|01|05|28|33|35|45 (자동)
+		B|01|13|14|38|40|41 (자동)
+		C|02|28|30|32|36|39 (자동)
+		D|20|25|32|33|34|41 (자동)
+		E|14|26|28|31|35|45 (자동)
+Message:	SUCCESS
+----------------------
+❯❯❯ echo Cool.
+Cool.
+```
+
 [동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
 
 Python 3.8 이상에서 설치해야 최신버전이 작동합니다.
