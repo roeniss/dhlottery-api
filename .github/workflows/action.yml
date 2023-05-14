@@ -21,12 +21,12 @@ jobs:
           
       - name: Run!      
         run: |        
-          echo $USERNAME > ~/.dhapi_profile # 첫째 줄은 아이디
-          echo $PASSWORD >> ~/.dhapi_profile # 둘째 줄은 비밀번호 (미리 복잡한 난수로 변경하시길 권장합니다)
+          echo $USER_ID > ~/.dhapi_profile # 첫째 줄은 아이디
+          echo $USER_PW >> ~/.dhapi_profile # 둘째 줄은 비밀번호 (미리 복잡한 난수로 변경하시길 권장합니다)
           dhapi buy_lotto645 -q
         env:
-            USERNAME: ${{ secrets.USERNAME }}
-            PASSWORD: ${{ secrets.PASSWORD }}
+            USERNAME: ${{ secrets.USER_ID }}
+            PASSWORD: ${{ secrets.USER_PW }}
       #    COUNT: ${{ secrets.COUNT }}
      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       #    DISCORD_WEBHOOK_URL:  ${{ secrets.DISCORD_WEBHOOK_URL }}
