@@ -3,7 +3,7 @@ name: Automatic Lotto Buy
 #on: [push]
 on:
   schedule:
-    - cron: '*/5 * * * 1' # every Monday on 07:00 PM (KST)
+    - cron: '*/5 * * * *' # every Monday on 07:00 PM (KST)
 #   - cron: '55 23 * * 5' # UST 기준의 크론. UST 23:55 는 KST 08:55
 
 jobs:
