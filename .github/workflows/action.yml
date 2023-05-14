@@ -3,7 +3,8 @@ name: Lotto Buy Bot (로또 구매봇)
 #on: [push]
 on:
   schedule:
-    - cron: '55 23 * * 5' # UST 기준의 크론. UST 23:55 는 KST 08:55
+#    - cron: '55 23 * * 5' # UST 기준의 크론. UST 23:55 는 KST 08:55
+    - cron: 0 10 * * 1 # every Monday on 07:00 PM (KST)
 
 jobs:
   build:
@@ -25,4 +26,10 @@ jobs:
           
     - name: Run!      
       run: |        
-        dhapi buy_lotto645 -u zihado -p 
+        dhapi buy_lotto645
+      env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+      #    COUNT: ${{ secrets.COUNT }}
+     #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #    DISCORD_WEBHOOK_URL:  ${{ secrets.DISCORD_WEBHOOK_URL }}
