@@ -1,12 +1,28 @@
+import enum
 import json
+import os
+import string
+
+
+class Lotto645GameType(enum.IntEnum):
+    AUTO = 0
+    MANUAL = 1
+    SEMIAUTO = 2
 
 
 class Lotto645BuyRequest:
-    def __init__(self, games=None):
+    MAX_NUMBER_COUNT_IN_GAME = 6
+    MAX_GAME_COUNT = 5
+
+    def __init__(self, games):
         """
-        :param 게임은 다섯 개의 list 로 이루어져 있다. 각 게임은 여섯 칸 짜리 list 로 이루어져 있다. 각 칸은 1~45 의 숫자 또는 '자동'을 의미하는 "x" 를 사용한다.
-         e.g. [["x", "x", "x", "x", "x"], ["x"], [1, 2, 3, 4, 15, 45], None, [3, 5, "x", "x", "x"]]
-         - This example shows two auto games, one manual game, one half-auto game and forth game is not used.
+        :param 게임은 다섯 개 이하의 list 로 이루어져 있다.
+        각 게임은 여섯 칸 이하의 list 로 이루어져 있다. 각 칸은 1~45 의 숫자를 사용한다.
+        - 숫자가 없는 list는 자동을 의미한다.
+        - 여섯개의 숫자를 갖는 list는 수동을 의미한다.
+        - 한개 이상 여섯개 미만의 숫자를 갖는 list는 반자동을 의미한다.
+        e.g. [[], [], [], [1, 2], [1, 2, 3, 4, 15, 45]]
+        - This example shows three auto games, one semi-auto game and one manual game.
         """
         self._games = games
 
@@ -14,37 +30,43 @@ class Lotto645BuyRequest:
             raise RuntimeError(f"비정상적인 구매 요청입니다.\n{self.format()}")
 
     def _is_correct_games(self, games):
-        return isinstance(games, list) and len(games) == 5 and all(map(lambda x: self._is_correct_game(x), games))
+        # fmt: off
+        return (isinstance(games, list)
+            and len(games) <= self.MAX_GAME_COUNT
+            and all(map(lambda x: self._is_correct_game(x), games)))
+        # fmt: on
 
     def _is_correct_game(self, game):
-        return game is None or (
-            isinstance(game, list)
-            and (len(game) == 6 or len(game) == 1)
-            and (len(set(filter(lambda x: x != "x", game))) == len(list(filter(lambda x: x != "x", game))))
-            and all(map(lambda x: x == "x" or 1 <= x <= 45, game))
-        )
+        # fmt: off
+        return (isinstance(game, list)
+            and len(game) <= self.MAX_NUMBER_COUNT_IN_GAME
+            and all(map(lambda x: isinstance(x, int) and 1 <= x <= 45, game))
+            and len(game) == len(set(game)))
+        # fmt: on
 
     def has_auto_game(self):
         return any(filter(lambda game: self._is_auto_game(game), self._filter_used_games()))
 
     def _is_auto_game(self, game):
-        return (len(game) == 6 and self._get_auto_count_in_game(game) == 6) or (len(game) == 1 and self._get_auto_count_in_game(game) == 1)
+        return self._get_manual_count_in_game(game) == 0
 
-    def has_half_auto_game(self):
-        return any(filter(lambda game: self._is_half_auto_game(game), self._filter_used_games()))
+    def has_semi_auto_game(self):
+        return any(filter(lambda game: self._is_semi_auto_game(game), self._filter_used_games()))
 
-    def _is_half_auto_game(self, game):
-        return len(game) == 6 and 0 < self._get_auto_count_in_game(game) < 6 and (self._get_auto_count_in_game(game) != 1)
+    def _is_semi_auto_game(self, game):
+        return 0 < self._get_manual_count_in_game(game) < self.MAX_NUMBER_COUNT_IN_GAME
 
     def has_manual_game(self):
         return any(filter(lambda game: self._is_manual_game(game), self._filter_used_games()))
 
     def _is_manual_game(self, game):
-        return self._get_auto_count_in_game(game) == 0
+        return self._get_manual_count_in_game(game) == self.MAX_NUMBER_COUNT_IN_GAME
 
     def _get_auto_count_in_game(self, game):
-        """한 게임 내에서의 자동번호 개수를 반환한다. 사용하지 않는 게임(None)에 대해선 사용할 수 없다."""
-        return len(list(filter(lambda x: x == "x", game)))
+        return self.MAX_NUMBER_COUNT_IN_GAME - len(game)
+
+    def _get_manual_count_in_game(self, game):
+        return len(game)
 
     def get_game_count(self):
         return len(self._filter_used_games())
@@ -52,28 +74,43 @@ class Lotto645BuyRequest:
     def _filter_used_games(self):
         return list(filter(lambda x: x is not None, self._games))
 
+    def _get_game_type(self, game):
+        if self._is_auto_game(game):
+            return Lotto645GameType.AUTO
+        if self._is_manual_game(game):
+            return Lotto645GameType.MANUAL
+        if self._is_semi_auto_game(game):
+            return Lotto645GameType.SEMIAUTO
+
+        raise RuntimeError("지원하지 않는 게임 타입입니다.")
+
+    def _get_gen_type(self, game_type):
+        if not isinstance(game_type, Lotto645GameType):
+            raise RuntimeError("지원하지 않는 게임 타입입니다.")
+
+        return str(game_type)
+
+    def _encode_game(self, slot, game):
+        game_type = self._get_game_type(game)
+        # fmt: off
+        return {
+            "genType": self._get_gen_type(game_type),
+            "arrGameChoiceNum": ",".join(map(str, game)) if game_type != Lotto645GameType.AUTO else None,
+            "alpabet": slot
+        }
+        # fmt: on
+
     def format(self):
-        return f"""[Lotto645 Buy Request]
-Game A: {self._games[0]}
-Game B: {self._games[1]}
-Game C: {self._games[2]}
-Game D: {self._games[3]}
-Game E: {self._games[4]}
-----------------------"""
+        return f"""
+[Lotto645 Buy Request]
+{os.linesep.join(f'Game {string.ascii_uppercase[i]}: {game}' for i, game in enumerate(self._games))}
+"""
 
     def create_dhlottery_request_param(self):
         params = []
-        slots = ["A", "B", "C", "D", "E"]
 
         for i, game in enumerate(self._games):
-            slot = slots[i]
-            if game is None:
-                continue
-            elif self._is_auto_game(game):
-                params.append({"genType": "0", "arrGameChoiceNum": None, "alpabet": slot})
-            elif self._is_half_auto_game(game):
-                raise NotImplementedError("반자동 모드는 아직 구현되지 않았습니다.")
-            else:
-                params.append({"genType": "0", "arrGameChoiceNum": game, "alpabet": slot})
+            slot = string.ascii_uppercase[i]
+            params.append(self._encode_game(slot, sorted(game)))
 
         return json.dumps(params)
