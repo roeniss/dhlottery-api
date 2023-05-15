@@ -59,6 +59,13 @@ dhapi -h
 dhapi buy_lotto645 -q # 프로필 파일을 이용해 계정 정보 입력 & 자동모드로 5장 구매
 ```
 
+### GitHub Actions를 이용하 자동구매
+* Repository 를 포크
+* Secret 생성 : Settings -> Secrets and Variables -> New repository secret
+* USER_ID : 계정
+* USER_PW : 패스워드 
+* actions.yml 파일으 수정하여 스케쥬 조정
+
 ## 기여하기
 
 기여는 대환영입니다! [CONTRIBUTING.md](/docs/CONTRIBUTING.md) 파일을 참고해주세요.
