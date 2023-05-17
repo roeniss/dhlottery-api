@@ -2,12 +2,9 @@ name: Automatic Lotto Buy
 #on: [push]
 on:
   schedule:
-#    - cron: '*/5 * * * *' # every Monday on 07:00 PM (KST)
     - cron: '55 23 * * 0' # 한국시간 기준 매주 일요일 오전 8시 55분
-  workflow_dispatch:
-    inputs:
-      tags:
-        description: 'Test scenario tags'  
+  workflow_dispatch:      # 테스트를 위해 workflow가 dispatch 되는 경우 실행이 가능하도록 추가
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,7 +13,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-          cache: 'pip' # caching pip dependencies
+          cache: 'pip' 
       - run: pip install -r requirements.txt
       - name: Install python package
         run: |        
@@ -28,8 +25,5 @@ jobs:
           echo $PASSWORD >> ~/.dhapi_profile
           dhapi buy_lotto645 -q
         env:
-            USERNAME: ${{ secrets.USER_ID }} # secret에 저장된 내용으 불러옴
+            USERNAME: ${{ secrets.USER_ID }} # secret에 저장된 내용을 불러옴
             PASSWORD: ${{ secrets.USER_PW }}
-      #    COUNT: ${{ secrets.COUNT }}
-     #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      #    DISCORD_WEBHOOK_URL:  ${{ secrets.DISCORD_WEBHOOK_URL }}
