@@ -3,7 +3,6 @@ on:
   schedule:
     - cron: '55 23 * * 0' # 한국시간 기준 매주 일요일 오전 8시 55분
   workflow_dispatch:      # 테스트를 위해 workflow가 dispatch 되는 경우 실행이 가능하도록 추가
-
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -13,7 +12,7 @@ jobs:
         with:
           python-version: '3.9'
           cache: 'pip' 
-      - name: Install dhjapi python package
+      - name: Install dhapi
         run: |        
           pip install dhapi
       - name: Buy Lotto645
