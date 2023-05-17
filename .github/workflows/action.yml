@@ -22,7 +22,7 @@ jobs:
         run: |        
           pip install dhapi
           
-      - name: Run!      
+      - name: Buy
         run: |        
           echo $USERNAME > ~/.dhapi_profile # secret에 저장된 내용을 프로필 파일에 저장 
           echo $PASSWORD >> ~/.dhapi_profile
