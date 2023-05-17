@@ -16,11 +16,11 @@ jobs:
       - name: Install dhjapi python package
         run: |        
           pip install dhapi
-        env:
-            USERNAME: ${{ secrets.USER_ID }} # secret에 저장된 내용을 불러옴
-            PASSWORD: ${{ secrets.USER_PW }}
       - name: Buy Lotto645
         run: |        
           echo $USERNAME > ~/.dhapi_profile # secret에 저장된 내용을 프로필 파일에 저장 
           echo $PASSWORD >> ~/.dhapi_profile
           dhapi buy_lotto645 -q
+        env:
+            USERNAME: ${{ secrets.USER_ID }} # secret에 저장된 내용을 불러옴
+            PASSWORD: ${{ secrets.USER_PW }}
