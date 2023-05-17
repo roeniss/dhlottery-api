@@ -1,5 +1,4 @@
-name: Automatic Lotto Buy
-#on: [push]
+name: Buy weekly lotto645
 on:
   schedule:
     - cron: '55 23 * * 0' # 한국시간 기준 매주 일요일 오전 8시 55분
