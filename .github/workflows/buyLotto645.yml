@@ -4,7 +4,7 @@ on:
     - cron: '55 23 * * 0' # 한국시간 기준 매주 일요일 오전 8시 55분
   workflow_dispatch:      # 테스트를 위해 workflow가 dispatch 되는 경우 실행이 가능하도록 추가
 jobs:
-  butlotto645:
+  buylotto645:
     runs-on: ubuntu-latest
     steps:  
       - uses: actions/checkout@v3    
