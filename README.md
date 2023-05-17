@@ -60,10 +60,11 @@ dhapi buy_lotto645 -q # 프로필 파일을 이용해 계정 정보 입력 & 자
 ```
 
 ## GitHub Actions를 이용한 자동구매
-* 이 repo를 fork 합니다.
-* Secrets 생성 :  Settings -> Secrets and Variables -> New repository secret
-  * USER_ID : 계정
-  * USER_PW : 패스워드 
+
+- 이 repo를 fork 합니다.
+- Secrets 생성 :  Settings -> Secrets and Variables -> New repository secret
+  - USER_ID : 계정
+  - USER_PW : 패스워드 
 - [github action의 schedule](.github/workflows/action.yml#L5) 수정하여 일정 조정
 
 ## 기여하기
