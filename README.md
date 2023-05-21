@@ -54,6 +54,7 @@ Python 3.8 이상에서 설치해야 최신버전이 작동합니다.
 ### 설치 밎 사용법:
 
 ```sh
+pip install --upgrade pip # pip 가 최신 버전이 아니면 dhapi 구버전이 깔리는 경우가 있습니다
 pip install dhapi
 dhapi -h
 dhapi buy_lotto645 -q # 프로필 파일을 이용해 계정 정보 입력 & 자동모드로 5장 구매
