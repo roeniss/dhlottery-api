@@ -10,7 +10,7 @@
 >
 > 한 마디로, **현재 조작할 수 있는 옵션은 `-c` 뿐입니다.**
 
-### Windows, Linux, macOS
+### Windows, Linux, MacOSX
 
 macOS 말고 테스트를 안해봐서, 혹 작동하지 않는다면 Issues로 알려주시길 바랍니다.
 
@@ -27,7 +27,7 @@ dhapi -U $YOUR_ID -P -K lotto645 -T buy -M auto -C 5  # 로또645를 - 산다 - 
 
 현재는 아쉽게도 -C 옵션 (1~5개) 말고는 조절할 수 있는 옵션이 없습니다.
 
-### etc
+### python
 
 본 레포를 클론해서 dhapi.py를 실행시키는 방법으로도 사용하실 수 있습니다.
 
@@ -41,6 +41,14 @@ pip3 install -r requirements.txt # 디펜던시를 전역으로 설치하고 싶
 python3 dhapi -h # 도움말 출력
 
 dhapi -U $YOUR_ID -P -K lotto645 -T buy -M auto -C  # 로또6/45를 - 산다 - 5장 - 자동발급으로
+```
+
+### schedule
+
+```sh
+crontab -e
+
+0 0,6-23 * * * PATH=$PATH:/opt/homebrew/bin && dhapi buy_lotto645 -q
 ```
 
 ## 같이 개발하기
