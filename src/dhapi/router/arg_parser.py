@@ -1,11 +1,11 @@
 import argparse
-import pathlib
 import getpass
-import os
 import sys
 
 from dhapi.router.version_checker import get_versions
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
+
+from seunggabi_core_python.util import config_util
 
 
 class HelpOnErrorParser(argparse.ArgumentParser):
@@ -51,7 +51,8 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         buy_lotto645.formatter_class = argparse.RawTextHelpFormatter
 
         buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디입니다. (deprecated; -p 옵션 사용 권장)")
-        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
+        buy_lotto645.add_argument("-q", "--quiet", action="store_true",
+                                  help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
         buy_lotto645.add_argument(
             "-g",
             "--game",
@@ -72,21 +73,23 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             "--profile",
             required=False,
             nargs=1,
-            default="~/.dhapi_profile",
-            help="프로필 파일 절대경로입니다. (default: ~/.dhapi_profile; 포맷은 README.md 참고)",
+            default=["default"],
+            help="https://github.com/roeniss/dhlottery-api#계정 정보 세팅",
         )
-        buy_lotto645.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
+        buy_lotto645.add_argument("-d", "--debug", action="store_true",
+                                  help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
         self._args = parser.parse_args()
 
-        if not self._args.username is None:
+        if self._args.username:
             self._args.password = getpass.getpass("비밀번호를 입력하세요: ")
         else:
-            profile_path = pathlib.Path(self._args.profile).expanduser()
-            if not (os.path.exists(profile_path) and os.path.isfile(profile_path)):
-                _exit(f"{self._args.profile} 파일이 존재하지 않습니다")
-
-            with open(profile_path, encoding="utf-8") as f:
-                self._args.username, self._args.password = f.read().splitlines()
+            credentials = config_util.get(
+                group="dhapi",
+                context="credentials",
+                profile=self._args.profile[0]
+            )
+            self._args.username = credentials["username"]
+            self._args.password = credentials["password"]
 
         if self.is_buylotto645():
             self.normalize_games_for_lotto645()
