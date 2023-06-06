@@ -51,8 +51,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         buy_lotto645.formatter_class = argparse.RawTextHelpFormatter
 
         buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디입니다. (deprecated; -p 옵션 사용 권장)")
-        buy_lotto645.add_argument("-q", "--quiet", action="store_true",
-                                  help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
+        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
         buy_lotto645.add_argument(
             "-g",
             "--game",
@@ -76,8 +75,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             default=["default"],
             help="https://github.com/roeniss/dhlottery-api#계정 정보 세팅",
         )
-        buy_lotto645.add_argument("-d", "--debug", action="store_true",
-                                  help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
+        buy_lotto645.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
         self._args = parser.parse_args()
 
         if self._args.username:
