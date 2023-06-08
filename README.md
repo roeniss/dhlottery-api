@@ -1,6 +1,6 @@
 # DongHaeng Lottery API (Unofficial)
 
-```shell
+```sh
 ❯❯❯ dhapi buy_lotto645
 
 [Lotto645 Buy Request]
@@ -45,7 +45,7 @@ Python 3.8 이상에서 설치해야 최신버전이 작동합니다.
 `~/.dhapi/credentials` 파일에 username, password를 입력하면 자동으로 로그인합니다.
 profile을 여러개 설정할 수 있습니다.
 
-```shell
+```sh
 DHAPI_USERNAME=asdf
 DHAPI_PASSWORD=****
 
@@ -56,7 +56,7 @@ echo "[default]" > credentials
 echo username = $DHAPI_USERNAME >> credentials # username
 echo password = $DHAPI_PASSWORD >> credentials # password (미리 복잡한 난수로 변경하시길 권장합니다)
 ```
-```shell
+```sh
 DHAPI_USERNAME=qwer
 DHAPI_PASSWORD=5678
 
@@ -72,7 +72,7 @@ echo password = $DHAPI_PASSWORD >> credentials
 
 ### 설치 밎 사용법
 
-```shell
+```sh
 pip install --upgrade pip # pip 가 최신 버전이 아니면 dhapi 구버전이 깔리는 경우가 있습니다
 pip install dhapi
 
