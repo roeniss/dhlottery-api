@@ -83,6 +83,14 @@ dhapi buy_lotto645 -q # profile: default
 dhapi buy_lotto645 -q -p qwer # profile: qwer
 ```
 
+### 스케줄
+
+```sh
+crontab -e
+
+0 0,6-23 * * * PATH=$PATH:/opt/homebrew/bin && dhapi buy_lotto645 -q
+```
+
 ## 기여하기
 
 기여는 대환영입니다! [CONTRIBUTING.md](/docs/CONTRIBUTING.md) 파일을 참고해주세요.
