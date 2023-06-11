@@ -2,10 +2,10 @@ import argparse
 import getpass
 import sys
 
+from seunggabi_core_python.util import config_util
+
 from dhapi.router.version_checker import get_versions
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
-
-from seunggabi_core_python.util import config_util
 
 
 class HelpOnErrorParser(argparse.ArgumentParser):
@@ -81,11 +81,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         if self._args.username:
             self._args.password = getpass.getpass("비밀번호를 입력하세요: ")
         else:
-            credentials = config_util.get(
-                group="dhapi",
-                context="credentials",
-                profile=self._args.profile[0]
-            )
+            credentials = config_util.get(group="dhapi", context="credentials", profile=self._args.profile[0])
             self._args.username = credentials["username"]
             self._args.password = credentials["password"]
 
