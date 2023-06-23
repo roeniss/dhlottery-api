@@ -90,7 +90,7 @@ class LotteryClient:
             headers=self._headers,
             data={
                 "round": str(self._get_round()),
-                "direct": "172.17.20.52",  # TODO: test if this can be omitted
+                "direct": "INTCOM1",
                 "nBuyAmount": str(1000 * req.get_game_count()),
                 "param": req.create_dhlottery_request_param(),
                 "gameCnt": req.get_game_count(),
