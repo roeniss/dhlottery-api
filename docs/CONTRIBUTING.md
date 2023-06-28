@@ -19,6 +19,7 @@ router, client, controller 가 모두 domain_object 에 의존하는 형태입�
 `PYTHONPATH`를 아래와 같이 지정해보세요.
 
 ```sh
+cd ..
 PYTHONPATH=./src/ python3 src/dhapi/main.py buy_lotto645 -u $USER_ID -q
 ```
 
