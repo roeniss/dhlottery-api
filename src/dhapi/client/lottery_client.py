@@ -16,6 +16,7 @@ class LotteryClient:
     _login_request_url = "https://www.dhlottery.co.kr/userSsl.do?method=login"
     _buy_lotto645_url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do"
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
+    _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
 
     def __init__(self):
         self._headers = {
@@ -87,7 +88,7 @@ class LotteryClient:
         """
 
         res = requests.post(
-            url="https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json",
+            url=self._ready_socket,
             headers=self._headers
         )
         direct = json.loads(res.text)["ready_ip"]
