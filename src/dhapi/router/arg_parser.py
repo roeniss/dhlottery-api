@@ -108,7 +108,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
 
     def normalize_games_for_lotto645(self):
         if self._args.games is None:
-            self._args.games = [None for _ in range(5)]
+            self._args.games = [None for _ in range(Lotto645BuyRequest.MAX_GAME_COUNT)]
 
         req_bucket = []
         for game in self._args.games:

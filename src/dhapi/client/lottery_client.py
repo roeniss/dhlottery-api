@@ -16,6 +16,7 @@ class LotteryClient:
     _login_request_url = "https://www.dhlottery.co.kr/userSsl.do?method=login"
     _buy_lotto645_url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do"
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
+    _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
 
     def __init__(self):
         self._headers = {
@@ -26,14 +27,15 @@ class LotteryClient:
             "sec-ch-ua-mobile": "?0",
             "Upgrade-Insecure-Requests": "1",
             "Origin": "https://dhlottery.co.kr",
-            "Content-Type": "application/x-www-form-urlencoded",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-            "Referer": "https://dhlottery.co.kr/",
+            "Referer": "https://dhlottery.co.kr",
             "Sec-Fetch-Site": "same-site",
             "Sec-Fetch-Mode": "navigate",
             "Sec-Fetch-User": "?1",
             "Sec-Fetch-Dest": "document",
             "Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
+            "X-Requested-With": "XMLHttpRequest"
         }
         self._set_default_session()
 
@@ -85,21 +87,24 @@ class LotteryClient:
          위 내용은 second, third, fourth, fifth 파라미터에도 적용된다.
         """
 
+        res = requests.post(
+            url=self._ready_socket,
+            headers=self._headers
+        )
+        direct = json.loads(res.text)["ready_ip"]
+
+        data = {
+            "round": str(self._get_round()),
+            "direct": direct,
+            "nBuyAmount": str(1000 * req.get_game_count()),
+            "param": req.create_dhlottery_request_param(),
+            "gameCnt": req.get_game_count(),
+        }
         resp = requests.post(
             self._buy_lotto645_url,
             headers=self._headers,
-            data={
-                "round": str(self._get_round()),
-                "direct": "172.17.20.52",  # TODO: test if this can be omitted
-                "nBuyAmount": str(1000 * req.get_game_count()),
-                "param": req.create_dhlottery_request_param(),
-                "gameCnt": req.get_game_count(),
-                # "ROUND_DRAW_DATE": "2021/06/01", # succeed after commented
-                # "WAMT_PAY_TLMT_END_DT": "2022/06/01", # succeed after commented
-            },
+            data=data,
             timeout=10,
         )
-
-        resp.encoding = "utf-8"
 
         return json.loads(resp.text)
