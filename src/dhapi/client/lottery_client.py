@@ -76,7 +76,7 @@ class LotteryClient:
     def _get_round(self):
         resp = requests.get(self._round_info_url, timeout=10)
         soup = BeautifulSoup(resp.text, "html5lib")  # 'html5lib' : in case that the html don't have clean tag pairs
-        last_drawn_round = int(soup.find("strong", id="lottoDrwNo").text)
+        last_drawn_round = int(soup.find("h2", {"class": "time"}).find("strong").text)
         return last_drawn_round + 1
 
     def buy_lotto645(self, req: Lotto645BuyRequest):
