@@ -35,7 +35,7 @@ class LotteryClient:
             "Sec-Fetch-User": "?1",
             "Sec-Fetch-Dest": "document",
             "Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
-            "X-Requested-With": "XMLHttpRequest"
+            "X-Requested-With": "XMLHttpRequest",
         }
         self._set_default_session()
 
@@ -76,7 +76,10 @@ class LotteryClient:
     def _get_round(self):
         resp = requests.get(self._round_info_url, timeout=10)
         soup = BeautifulSoup(resp.text, "html5lib")  # 'html5lib' : in case that the html don't have clean tag pairs
-        last_drawn_round = int(soup.find("strong", id="lottoDrwNo").text)
+        elem = soup.find("h2", {"class": "time"})
+        if not elem:
+            raise RuntimeError("현재 회차 정보를 가져올 수 없습니다.")
+        last_drawn_round = int(elem.find("strong").text)
         return last_drawn_round + 1
 
     def buy_lotto645(self, req: Lotto645BuyRequest):
@@ -87,11 +90,10 @@ class LotteryClient:
          위 내용은 second, third, fourth, fifth 파라미터에도 적용된다.
         """
 
-        res = requests.post(
-            url=self._ready_socket,
-            headers=self._headers
-        )
+        res = requests.post(url=self._ready_socket, headers=self._headers, timeout=5)
         direct = json.loads(res.text)["ready_ip"]
+
+        logger.debug(f"direct: {direct}")
 
         data = {
             "round": str(self._get_round()),
@@ -100,11 +102,14 @@ class LotteryClient:
             "param": req.create_dhlottery_request_param(),
             "gameCnt": req.get_game_count(),
         }
+        logger.debug(f"data: {data}")
         resp = requests.post(
             self._buy_lotto645_url,
             headers=self._headers,
             data=data,
             timeout=10,
         )
+
+        logger.debug(f"resp.text: {resp.text}")
 
         return json.loads(resp.text)

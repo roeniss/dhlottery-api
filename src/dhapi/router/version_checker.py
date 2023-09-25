@@ -1,10 +1,10 @@
 from subprocess import call
 from packaging import version
 
-from johnnydep.lib import JohnnyDist
-from johnnydep import logs
-
-logs.configure_logging(verbosity=0)
+# from johnnydep.lib import JohnnyDist
+# from johnnydep import logs
+#
+# logs.configure_logging(verbosity=0)
 
 PACKAGE_NAME = "dhapi"
 
@@ -17,8 +17,9 @@ def get_versions():
     """
     :return (installed_version, latest_version)
     """
-    dist = JohnnyDist(PACKAGE_NAME)
-    return dist.version_installed, dist.version_latest
+    # dist = JohnnyDist(PACKAGE_NAME)
+    # return dist.version_installed, dist.version_latest
+    return ("0.0.0", "0.0.0")  # TODO(seonghyeok): Implement this function. JoynnyDist is not working.
 
 
 def suggest_upgrade():

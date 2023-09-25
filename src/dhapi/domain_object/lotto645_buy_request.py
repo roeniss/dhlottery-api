@@ -88,7 +88,7 @@ class Lotto645BuyRequest:
         if not isinstance(game_type, Lotto645GameType):
             raise RuntimeError("지원하지 않는 게임 타입입니다.")
 
-        return str(game_type)
+        return str(game_type.value)
 
     def _encode_game(self, slot, game):
         game_type = self._get_game_type(game)
