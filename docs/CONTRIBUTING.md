@@ -20,7 +20,7 @@ router, client, controller 가 모두 domain_object 에 의존하는 형태입�
 
 ```sh
 cd ..
-PYTHONPATH=./src/ python3 src/dhapi/main.py buy_lotto645 -u $USER_ID -q
+PYTHONPATH=./src/ python3 src/dhapi/main.py buy_lotto645 -q
 ```
 
 ### PR 전 확인사항

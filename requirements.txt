@@ -1,4 +1,4 @@
 requests~=2.28.2
 beautifulsoup4~=4.12.0
 html5lib~=1.1
-seunggabi_core_python==0.2.3
+seunggabi_core_python==1.0.0
