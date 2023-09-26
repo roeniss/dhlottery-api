@@ -76,11 +76,12 @@ class LotteryClient:
     def _get_round(self):
         resp = requests.get(self._round_info_url, timeout=10)
         soup = BeautifulSoup(resp.text, "html5lib")  # 'html5lib' : in case that the html don't have clean tag pairs
-        elem = soup.find("h2", {"class": "time"})
+
+        elem = soup.find("strong", {"id": "lottoDrwNo"})
         if not elem:
             raise RuntimeError("현재 회차 정보를 가져올 수 없습니다.")
-        last_drawn_round = int(elem.find("strong").text)
-        return last_drawn_round + 1
+
+        return int(elem.text) + 1
 
     def buy_lotto645(self, req: Lotto645BuyRequest):
         """
