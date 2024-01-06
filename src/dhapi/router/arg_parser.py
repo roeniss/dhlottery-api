@@ -1,10 +1,9 @@
 import argparse
 import getpass
 import sys
+from dhapi.router.credentials_provider import get_credentials
+from dhapi.router.version_provider import get_installed_version
 
-from seunggabi_core_python.util import config_util
-
-from dhapi.router.version_checker import get_versions
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 
 
@@ -12,11 +11,6 @@ class HelpOnErrorParser(argparse.ArgumentParser):
     def error(self, message):
         sys.stderr.write(f"🚨 입력 파라미터 에러 발생: {message}\n")
         sys.exit(1)
-
-
-def _exit(message):
-    obj = HelpOnErrorParser()
-    obj.error(message)
 
 
 class ArgParser:

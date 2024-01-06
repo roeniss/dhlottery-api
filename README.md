@@ -45,6 +45,10 @@ Python 3.8 이상에서 설치해야 최신버전이 작동합니다.
 `~/.dhapi/credentials` 파일에 username, password를 입력하면 자동으로 로그인합니다.
 profile을 여러개 설정할 수 있습니다.
 
+> [!NOTE]
+> TOML 문법을 사용합니다. 따라서 value 값은 쌍따옴표를 사용해야 합니다.
+
+
 ```sh
 DHAPI_USERNAME=asdf
 DHAPI_PASSWORD=****
@@ -53,8 +57,8 @@ mkdir -p ~/.dhapi
 cd ~/.dhapi
 
 echo "[default]" > credentials
-echo username = $DHAPI_USERNAME >> credentials # username
-echo password = $DHAPI_PASSWORD >> credentials # password (미리 복잡한 난수로 변경하시길 권장합니다)
+echo username = "$DHAPI_USERNAME" >> credentials # username
+echo password = "$DHAPI_PASSWORD" >> credentials # password (미리 복잡한 난수로 변경하시길 권장합니다)
 ```
 ```sh
 DHAPI_USERNAME=qwer
@@ -63,9 +67,9 @@ DHAPI_PASSWORD=5678
 cd ~/.dhapi
 
 echo "" >> credentials
-echo "[qwer]" >> credentials
-echo username = $DHAPI_USERNAME >> credentials
-echo password = $DHAPI_PASSWORD >> credentials
+echo "[$DHAPI_USERNAME]" >> credentials
+echo username = "$DHAPI_USERNAME" >> credentials
+echo password = "$DHAPI_PASSWORD" >> credentials
 ```
 
 > `-u $USER_ID` 파라미터를 이용하면 명령어 실행 중 비밀번호를 입력받는 방법도 있지만, 권장하지 않습니다.
