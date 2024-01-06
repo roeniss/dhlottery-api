@@ -8,6 +8,7 @@ disable=
   W0511, # no TODO
   R1705, # no else
   R0903, # too few public methods
+  W0718, # broad exception caught
 
 [FORMAT]
 max-line-length=180
