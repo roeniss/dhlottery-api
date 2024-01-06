@@ -6,10 +6,10 @@ from dhapi.configuration.logger import set_logger
 def entrypoint():
     arg_parser = ArgParser()
 
-    set_logger(arg_parser.get_is_debug())
+    set_logger(arg_parser.is_debug())
 
-    if arg_parser.is_buylotto645():
-        ctrl = Lotto645Controller(arg_parser.get_user_id(), arg_parser.get_user_pw())
-        ctrl.buy(arg_parser.create_lotto645_req(), arg_parser.is_quiet())
+    if arg_parser.command() == "BUY_LOTTO645":
+        ctrl = Lotto645Controller(arg_parser.user_id(), arg_parser.user_pw())
+        ctrl.buy(arg_parser.buy_lotto645_req(), arg_parser.is_quiet())
     else:
         raise NotImplementedError("Not implemented yet")
