@@ -50,8 +50,9 @@ profile을 여러개 설정할 수 있습니다.
 
 
 ```sh
-DHAPI_USERNAME=asdf
-DHAPI_PASSWORD=****
+# 쌍따옴표(\")를 포함하여 값을 입력합니다.
+DHAPI_USERNAME=\"asdf\"
+DHAPI_PASSWORD=\"****\"
 
 mkdir -p ~/.dhapi
 cd ~/.dhapi
@@ -61,8 +62,8 @@ echo username = "$DHAPI_USERNAME" >> credentials # username
 echo password = "$DHAPI_PASSWORD" >> credentials # password (미리 복잡한 난수로 변경하시길 권장합니다)
 ```
 ```sh
-DHAPI_USERNAME=qwer
-DHAPI_PASSWORD=5678
+DHAPI_USERNAME=\"qwer\"
+DHAPI_PASSWORD=\"5678\"
 
 cd ~/.dhapi
 
