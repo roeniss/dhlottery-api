@@ -48,29 +48,34 @@ profile을 여러개 설정할 수 있습니다.
 > [!NOTE]
 > TOML 문법을 사용합니다. 따라서 value 값은 쌍따옴표를 사용해야 합니다.
 
+> [!WARNING]
+> `\" + USERNAME/PASSWORD + \"` 형식에 맞게 계정 정보를 작성해야 합니다. <br>
+> 예) username이 myName일 때 => `\"myName\"`
 
 ```sh
-DHAPI_USERNAME=asdf
-DHAPI_PASSWORD=****
+DHAPI_USERNAME=\"asdf\"
+DHAPI_PASSWORD=\"****\"
 
 mkdir -p ~/.dhapi
 cd ~/.dhapi
 
+# 기본 사용자는 [default]로 명시
 echo "[default]" > credentials
 echo username = "$DHAPI_USERNAME" >> credentials # username
 echo password = "$DHAPI_PASSWORD" >> credentials # password (미리 복잡한 난수로 변경하시길 권장합니다)
 ```
 ```sh
-DHAPI_USERNAME=qwer
-DHAPI_PASSWORD=5678
+DHAPI_USERNAME=\"qwer\"
+DHAPI_PASSWORD=\"5678\"
 
 cd ~/.dhapi
 
 echo "" >> credentials
-echo "[$DHAPI_USERNAME]" >> credentials
+echo "[${DHAPI_USERNAME:1:-1}]" >> credentials
 echo username = "$DHAPI_USERNAME" >> credentials
 echo password = "$DHAPI_PASSWORD" >> credentials
 ```
+
 
 > `-u $USER_ID` 파라미터를 이용하면 명령어 실행 중 비밀번호를 입력받는 방법도 있지만, 권장하지 않습니다.
 
