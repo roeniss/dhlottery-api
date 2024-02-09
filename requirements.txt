@@ -14,3 +14,4 @@ soupsieve==2.5
 tomli==2.0.1
 urllib3==1.26.18
 webencodings==0.5.1
+tomli-w==1.0.0
