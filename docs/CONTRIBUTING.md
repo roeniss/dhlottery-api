@@ -33,19 +33,11 @@ make lintfmt
 
 ### 배포
 
-pypi를 통해 배포합니다. ([pypi repository](https://pypi.org/project/dhapi/))
+이 작업은 메인테이너가 진행합니다.
 
-(build, setuptools, tween 필요)
-
-`setup.py`에서 'version'을 적절하게 bump 후 publish 합니다.
-
-그런데 pypi 저장소 토큰이 저한테 있어서... 지금은 저만 배포할 수 있습니다.
-
-```sh
-make publish
-```
-
-배포할 때마다, `setup.py` 와 `arg_parser.py` 의 버전 정보를 수동으로 갱신해주고 있습니다.
+1. main 브랜치에서 [VERSION](./VERSION) 을 수정한 후 publish 브랜치로 PR 생성합니다.
+2. CI가 통과되고 머지되면 배포를 위한 워크플로우가 진행됩니다. 이 과정에서 git tag가 생성됩니다.
+3. 생성된 tag로 GitHub Release를 생성합니다.
 
 ### 참고자료
 
