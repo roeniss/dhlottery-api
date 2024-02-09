@@ -1,96 +1,38 @@
-# DongHaeng Lottery API (Unofficial)
-
-```sh
-❯❯❯ dhapi buy_lotto645
-
-[Lotto645 Buy Request]
-Game A: ['x', 'x', 'x', 'x', 'x', 'x']
-Game B: ['x', 'x', 'x', 'x', 'x', 'x']
-Game C: ['x', 'x', 'x', 'x', 'x', 'x']
-Game D: ['x', 'x', 'x', 'x', 'x', 'x']
-Game E: ['x', 'x', 'x', 'x', 'x', 'x']
-----------------------
-❓ 위와 같이 구매하시겠습니까? [Y/n] y
-✅ 구매를 완료하였습니다.
-[Lotto645 Buy Response]
-------------------
-Round:		1068
-Barcode:	54095 53510 29208 58505 11515 12578
-Cost:		5000
-Numbers:
-		A|01|05|28|33|35|45 (자동)
-		B|01|13|14|38|40|41 (자동)
-		C|02|28|30|32|36|39 (자동)
-		D|20|25|32|33|34|41 (자동)
-		E|14|26|28|31|35|45 (자동)
-Message:	SUCCESS
-----------------------
-❯❯❯ echo Cool.
-Cool.
-```
+# 비공식 동행복권 API
 
 [동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
-
-Python 3.8 이상에서 설치해야 최신버전이 작동합니다.
-
-## 구현된 기능
-
-- [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1)
-  - 자동 구매 1 ~ 5장
-
-## 사용법
-
-### 계정 정보 세팅
-
-`~/.dhapi/credentials` 파일에 username, password를 입력하면 자동으로 로그인합니다.
-profile을 여러개 설정할 수 있습니다.
-
-> [!NOTE]
-> TOML 문법을 사용합니다. 따라서 value 값은 쌍따옴표를 사용해야 합니다.
-
-> [!WARNING]
-> `\" + USERNAME/PASSWORD + \"` 형식에 맞게 계정 정보를 작성해야 합니다. <br>
-> 예) username이 myName일 때 => `\"myName\"`
-
-```sh
-DHAPI_USERNAME=\"asdf\"
-DHAPI_PASSWORD=\"****\"
-
-mkdir -p ~/.dhapi
-cd ~/.dhapi
-
-# 기본 사용자는 [default]로 명시
-echo "[default]" > credentials
-echo username = "$DHAPI_USERNAME" >> credentials # username
-echo password = "$DHAPI_PASSWORD" >> credentials # password (미리 복잡한 난수로 변경하시길 권장합니다)
-```
-```sh
-DHAPI_USERNAME=\"qwer\"
-DHAPI_PASSWORD=\"5678\"
-
-cd ~/.dhapi
-
-echo "" >> credentials
-echo "[${DHAPI_USERNAME:1:-1}]" >> credentials
-echo username = "$DHAPI_USERNAME" >> credentials
-echo password = "$DHAPI_PASSWORD" >> credentials
-```
-
-
-> `-u $USER_ID` 파라미터를 이용하면 명령어 실행 중 비밀번호를 입력받는 방법도 있지만, 권장하지 않습니다.
 
 ### 설치 밎 사용법
 
 ```sh
-pip install --upgrade pip # pip 가 최신 버전이 아니면 dhapi 구버전이 깔리는 경우가 있습니다
-pip install dhapi
-
-dhapi -h
-
-# 자동모드로 5장 구매
-dhapi buy_lotto645 -q # profile: default
-dhapi buy_lotto645 -q -p qwer # profile: qwer
+pip install dhapi # pip 최신 버전을 권장합니다: pip install --upgrade pip
+dhapi buy_lotto645 --help # 로또6/45 구매 도움말 보기
+dhapi buy_lotto645 -q # 자동모드로 5장 구매
 ```
+
+## 구현된 기능
+
+-   [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1)
+	- 자동 구매 1 ~ 5장
+
+## 고급 설정
+
+### 프로필 (계정) 설정
+
+> [!NOTE] 최초 프로그램을 실행할 때 프로필 정보를 세팅하는 과정이 진행됩니다. 이 섹션에선 직접 프로필 정보 파일을 수정하는 법을 안내합니다.
+
+`~/.dhapi/credentials` 파일을 사용해 프로필 정보를 수정하거나 여러 계정을 설정할 수 있습니다. toml 포맷을 사용하고 있으며, 아래와 같은 형식으로 작성할 수 있습니다.
+
+```toml
+[default]
+username = "dhlotter_id"
+password = "dhlotter_pw"
+[another_profile]
+username = "dhlotter_second_id"
+password = "dhlotter_second_pw"
+```
+
+이후 `-p` 플래그로 프로필을 골라 사용합니다.
 
 ## 기여하기
 
