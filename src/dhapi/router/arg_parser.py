@@ -75,7 +75,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             "--profile",
             required=False,
             default="default",
-            help="https://github.com/roeniss/dhlottery-api#계정 정보 세팅",
+            help="지정하지 않으면 'default' 프로필을 사용합니다.",
         )
 
         # -d
