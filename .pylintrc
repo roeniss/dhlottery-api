@@ -13,5 +13,5 @@ disable=
 
 [FORMAT]
 max-line-length=180
-good-names=i,j,k,f
+good-names=i,j,k,f,e
 disable=logging-fstring-interpolation
