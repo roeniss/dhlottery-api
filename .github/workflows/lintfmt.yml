@@ -1,8 +1,6 @@
 name: Execute Lint Formatting
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
