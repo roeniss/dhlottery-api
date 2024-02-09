@@ -1,11 +1,10 @@
-publish: lintfmt clean
+build: clean
 	yes | pip3 install build twine
 	python3 -m build --sdist
 	python3 -m build --wheel
 	twine check dist/*
-	twine upload dist/*
 
-.PHONY : publish
+.PHONY : build
 
 
 clean:
