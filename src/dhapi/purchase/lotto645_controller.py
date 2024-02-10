@@ -1,22 +1,30 @@
 import logging
 
 from dhapi.client.lottery_client import LotteryClient
+from dhapi.client.mailjet_email_client import MailjetEmailClient
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 
 logger = logging.getLogger(__name__)
 
 
 class Lotto645Controller:
-    def __init__(self, user_id, user_pw):
-        self.client = LotteryClient()
-        self.client.login(user_id, user_pw)
+    def __init__(self, lottery_client: LotteryClient, email_client: MailjetEmailClient):
+        self.client = lottery_client
+        self.client.login()
+        self.email_client = email_client
 
-    def buy(self, req: Lotto645BuyRequest, quiet: bool):
+    def buy(self, req: Lotto645BuyRequest, quiet: bool = False, send_result_to_email: bool = False):
         if not self._confirm_purchase(req, quiet):
-            print("✅ 구매를 취소했습니다.")
-        else:
-            result = self.client.buy_lotto645(req)
-            self._show_result(result)
+            logger.info("✅ 구매를 취소했습니다.")
+            return
+
+        result = self.client.buy_lotto645(req)
+
+        result_text = self._make_result_text(result)
+        if send_result_to_email:
+            self.email_client.send_email("동행복권 645 로또 구매 결과", result_text)
+            return
+        logger.info(result_text)
 
     def _confirm_purchase(self, req, quiet):
         print(
@@ -26,14 +34,14 @@ class Lotto645Controller:
         )
 
         if quiet:
-            print("yes\n✅ --quiet 플래그가 주어져 자동으로 구매를 진행합니다.")
+            logger.info("yes\n✅ --quiet 플래그가 주어져 자동으로 구매를 진행합니다.")
             return True
         else:
             answer = input().strip().lower()
             return answer in ["y", "yes", ""]
 
     # ID가 다른 경우 loginYn이 N으로 나옴
-    def _show_result(self, body: dict) -> None:
+    def _make_result_text(self, body: dict) -> str:
         result = body.get("result", {})
         if result.get("resultMsg", "FAILURE").upper() != "SUCCESS":
             logger.debug(f"d: {body}")
@@ -41,8 +49,7 @@ class Lotto645Controller:
 
         logger.debug(f"response body: {body}")
 
-        print(
-            f"""✅ 구매를 완료하였습니다.
+        return f"""✅ 구매를 완료하였습니다.
 [Lotto645 Buy Response]
 ------------------
 Round:\t\t{result["buyRound"]}
@@ -51,9 +58,8 @@ Cost:\t\t{result["nBuyAmount"]}
 Numbers:\n{self._format_lotto_numbers(result["arrGameChoiceNum"])}
 Message:\t{result["resultMsg"]}
 ----------------------"""
-        )
 
-    def _format_lotto_numbers(self, lines: list) -> None:
+    def _format_lotto_numbers(self, lines: list) -> str:
         modes = {
             "1": "수동",
             "2": "반자동",

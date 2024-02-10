@@ -1,10 +1,10 @@
 import argparse
 import getpass
 import sys
-from dhapi.router.credentials_provider import get_credentials
-from dhapi.router.version_provider import get_installed_version
 
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
+from dhapi.router.credentials_provider import get_credentials
+from dhapi.router.version_provider import get_installed_version
 
 
 class HelpOnErrorParser(argparse.ArgumentParser):
@@ -30,7 +30,7 @@ class ArgParser:
 [buy_lotto645 명령어 사용 예시]
 
 dhapi buy_lotto645
-\t\t\t# ~/.dhapi_profile 을 읽어 ID/PW 를 자동으로 입력받고, 확인 후 자동모드로 5장 구매 (프로필 파일 포맷은 README.md 참고)
+\t\t\t# ~/.dhapi/credentials 을 읽어 ID/PW 를 자동으로 입력받고, 확인 후 자동모드로 5장 구매 (프로필 파일 포맷은 README.md 참고)
 dhapi buy_lotto645 -q
 \t\t\t# 확인 절차 없이 자동모드로 5장 구매
 dhapi buy_lotto645 -u $USER_ID
@@ -44,13 +44,6 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         )
 
         buy_lotto645.formatter_class = argparse.RawTextHelpFormatter
-
-        # -u
-        # deprecated
-        buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디입니다. (deprecated; -p 옵션 사용 권장)")
-
-        # -q
-        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
 
         # -g
         buy_lotto645.add_argument(
@@ -78,8 +71,19 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             help="지정하지 않으면 'default' 프로필을 사용합니다.",
         )
 
+        # -u
+        # deprecated
+        buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디입니다. (deprecated; -p 옵션 사용 권장)")
+
+        # -q
+        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
+
+        # -e
+        buy_lotto645.add_argument("-e", "--email", required=False, help="구매 결과를 콘솔로 출력하는 대신, 입력된 이메일로 전송합니다.")
+
         # -d
         buy_lotto645.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
+
         self._args = parser.parse_args()
 
         if self._args.username:
@@ -89,6 +93,14 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             credentials = get_credentials(self.profile())
             self._args.username = credentials.get("username")
             self._args.password = credentials.get("password")
+
+        if self._args.email:
+            credentials = get_credentials(self.profile())
+            self._args.mailjet_api_key = credentials.get("mailjet_api_key")
+            self._args.mailjet_api_secret = credentials.get("mailjet_api_secret")
+            self._args.mailjet_sender_email = credentials.get("mailjet_sender_email")
+            if not self._args.mailjet_api_key or not self._args.mailjet_api_secret or not self._args.mailjet_sender_email:
+                raise RuntimeError("Mailjet API Key/Secret 정보가 없습니다.")
 
     def profile(self):
         return self._args.profile
@@ -101,6 +113,21 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
 
     def user_pw(self):
         return self._args.password
+
+    def email(self):
+        return self._args.email
+
+    def mailjet_api_key(self):
+        return self._args.mailjet_api_key
+
+    def mailjet_api_secret(self):
+        return self._args.mailjet_api_secret
+
+    def mailjet_sender_email(self):
+        return self._args.mailjet_sender_email
+
+    def send_result_to_email(self):
+        return self.email() is not None
 
     def is_quiet(self):
         return self._args.quiet
