@@ -12,8 +12,8 @@ dhapi buy_lotto645 -q # 자동모드로 5장 구매
 
 ## 구현된 기능
 
--   [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1)
-    -   자동 구매 1 ~ 5장
+- [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1)
+    - 자동 구매 1 ~ 5장
 
 ## 고급 설정
 
@@ -33,6 +33,35 @@ password = "dhlotter_second_pw"
 ```
 
 이후 `-p` 플래그로 프로필을 골라 사용합니다.
+
+### 이메일로 결과 전송 하기
+
+`-e` 플래그로 수신할 이메일을 지정합니다. 이렇게 하면 **콘솔에 결과가 출력되지 않고 지정한 이메일로 전송됩니다.** 아래 세팅이 추가적으로 필요합니다.
+
+무료로 이메일을 보내기 위해 [Mailjet](https://www.mailjet.com/)을 사용합니다. 가입한 후, API KEY, SECRET KEY 를 발급합니다 (https://app.mailjet.com/account/apikeys).
+
+키 정보를 ~/.dhapi/credentials 파일에 다음과 같이 기입합니다.
+
+```text
+[default]
+username = "dhlotter_id"
+password = "dhlotter_pw"
+mailjet_api_key = "YOUR_API_KEY"
+mailjet_api_secret = "YOUR_SECRET_KEY"
+mailjet_sender_email = "YOUR_MAILJET_EMAIL"
+[another_profile]
+...
+```
+
+필요한 프로필에만 세팅하면 됩니다.
+
+> [!IMPORTANT]  
+> 위 세팅대로 따라온다면 결과 이메일이 아주 높은 확률로 스팸 메일함에 들어갑니다. 이럴 경우 해당 메일을 찾아서 '스팸이 아님' 체크를 해야 이후 메일들이 일반 메일함에 들어갑니다.
+
+> [!WARNING]  
+> `mailjet_sender_email` 값은 '발신 이메일 주소'로 활용되며, Mailjet 회원가입에 사용한 이메일이 아닐 경우 추가 세팅을 해야됩니다.
+>
+> 따로 세팅을 하지 않은 상태로 별도의 이메일을 기입하게 되면, 실제 메일이 발송되지 않고 'Senders and domains page'를 확인하라는 안내 메일을 받게 됩니다.
 
 ## 기여하기
 

@@ -18,7 +18,9 @@ class LotteryClient:
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
 
-    def __init__(self):
+    def __init__(self, user_id: str, user_pw: str):
+        self.user_id = user_id
+        self.user_pw = user_pw
         self._headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
             "Connection": "keep-alive",
@@ -56,14 +58,14 @@ class LotteryClient:
         else:
             raise RuntimeError("JSESSIONID 쿠키가 정상적으로 세팅되지 않았습니다.")
 
-    def login(self, user_id: str, user_pw: str):
+    def login(self):
         resp = requests.post(
             LotteryClient._login_request_url,
             headers=self._headers,
             data={
                 "returnUrl": LotteryClient._main_url,
-                "userId": user_id,
-                "password": user_pw,
+                "userId": self.user_id,
+                "password": self.user_pw,
                 "checkSave": "off",
                 "newsEventYn": "",
             },
