@@ -22,8 +22,8 @@ class LotteryClient:
     _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
 
     def __init__(self, user_id: str, user_pw: str):
-        self.user_id = user_id
-        self.user_pw = user_pw
+        self._user_id = user_id
+        self._user_pw = user_pw
         self._headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
             "Connection": "keep-alive",
@@ -68,8 +68,8 @@ class LotteryClient:
             headers=self._headers,
             data={
                 "returnUrl": LotteryClient._main_url,
-                "userId": self.user_id,
-                "password": self.user_pw,
+                "userId": self._user_id,
+                "password": self._user_pw,
                 "checkSave": "off",
                 "newsEventYn": "",
             },
