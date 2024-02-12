@@ -1,5 +1,7 @@
 # 비공식 동행복권 API
 
+[![PyPI version](https://badge.fury.io/py/dhapi.svg)](https://badge.fury.io/py/dhapi)
+
 [동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
 
 ### 설치 밎 사용법
