@@ -2,13 +2,10 @@ from dhapi.client.lottery_client import LotteryClient
 from dhapi.client.mailjet_email_client import MailjetEmailClient
 from dhapi.purchase.lotto645_controller import Lotto645Controller
 from dhapi.router.arg_parser import ArgParser
-from dhapi.configuration.logger import set_logger
 
 
 def entrypoint():
     arg_parser = ArgParser()
-
-    set_logger(arg_parser.is_debug())
 
     if arg_parser.command() == "BUY_LOTTO645":
         lottery_client = LotteryClient(arg_parser.user_id(), arg_parser.user_pw())

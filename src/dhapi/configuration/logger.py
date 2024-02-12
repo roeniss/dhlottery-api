@@ -2,14 +2,14 @@ import logging
 import sys
 
 
-def set_logger(debug=False):
+def set_logger(is_debug=False):
     root_logger = logging.getLogger()
 
-    if debug:
-        sys.tracebacklimit = 1000
+    sys.tracebacklimit = 1000
+
+    if is_debug:
         root_logger.setLevel(logging.DEBUG)
     else:
-        sys.tracebacklimit = 0  # suppress traceback
         root_logger.setLevel(logging.INFO)
 
     handler = logging.StreamHandler(stream=sys.stdout)
@@ -21,7 +21,7 @@ def set_logger(debug=False):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
 
-        root_logger.debug("🚨 full exception context:", exc_info=(exc_type, exc_value, exc_traceback))
-        root_logger.error("🚨 에러가 발생했습니다: %s", exc_value)
+        root_logger.error("🚨 예상치 못한 에러가 발생했습니다.")
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
     sys.excepthook = handle_exception
