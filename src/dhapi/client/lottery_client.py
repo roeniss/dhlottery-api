@@ -128,12 +128,14 @@ class LotteryClient:
         elem = soup.select("div.box.money")
         try:
             elem = elem[0]
+
             총예치금 = self._parse_digit(elem.select("p.total_new > strong")[0].contents[0])
             구매가능금액 = self._parse_digit(elem.select("td.ta_right")[3].contents[0])
             예약구매금액 = self._parse_digit(elem.select("td.ta_right")[4].contents[0])
             출금신청중금액 = self._parse_digit(elem.select("td.ta_right")[5].contents[0])
             구매불가능금액 = self._parse_digit(elem.select("td.ta_right")[6].contents[0])  # (예약구매금액 + 출금신청중금액)
             이번달누적구매금액 = self._parse_digit(elem.select("td.ta_right")[7].contents[0])
+
             return {
                 "총예치금": 총예치금,
                 "구매가능금액": 구매가능금액,
