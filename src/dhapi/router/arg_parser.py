@@ -22,6 +22,8 @@ class ArgParser:
 
         command_subparser = parser.add_subparsers(title="명령어 구분", dest="command", required=True)
 
+        ## buy_lotto645 section
+
         buy_lotto645 = command_subparser.add_parser(
             "buy_lotto645",
             help="로또6/45 구매",
@@ -80,6 +82,30 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         # -d
         buy_lotto645.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
 
+        ## show_balance section # TODO(roeniss): Better way for DRY?
+
+        show_balance = command_subparser.add_parser(
+            "show_balance",
+            help="예치금 현황 조회",
+            epilog="",
+        )
+
+        show_balance.formatter_class = argparse.RawTextHelpFormatter
+
+        # -p
+        show_balance.add_argument(
+            "-p",
+            "--profile",
+            required=False,
+            default="default",
+            help="지정하지 않으면 'default' 프로필을 사용합니다.",
+        )
+
+        # -d
+        show_balance.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
+
+        ## common section
+
         self._args = parser.parse_args()
 
         set_logger(self.is_debug())
@@ -88,7 +114,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         self._args.username = credentials.get("username")
         self._args.password = credentials.get("password")
 
-        if self._args.email:
+        if self._safe_arg_get(lambda: self._args.email):
             credentials = get_credentials(self.profile())
             self._args.mailjet_api_key = credentials.get("mailjet_api_key")
             self._args.mailjet_api_secret = credentials.get("mailjet_api_secret")
@@ -114,10 +140,10 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
 
     def email_source(self):
         return {
-            "recipient_email": self._args.email,
-            "sender_email": self._args.mailjet_sender_email,
-            "api_key": self._args.mailjet_api_key,
-            "api_secret": self._args.mailjet_api_secret,
+            "recipient_email": self._safe_arg_get(lambda: self._args.email),
+            "sender_email": self._safe_arg_get(lambda: self._args.mailjet_sender_email),
+            "api_key": self._safe_arg_get(lambda: self._args.mailjet_api_key),
+            "api_secret": self._safe_arg_get(lambda: self._args.mailjet_api_secret),
         }
 
     def send_result_to_email(self):
@@ -127,10 +153,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         return self._args.quiet
 
     def command(self):
-        if self._args.command == "buy_lotto645":
-            return "BUY_LOTTO645"
-        else:
-            raise NotImplementedError("Not implemented yet")
+        return self._args.command.upper()
 
     def transform_games(self):
         if self.command() == "BUY_LOTTO645":
@@ -146,3 +169,9 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
     def buy_lotto645_req(self):
         self.transform_games()
         return Lotto645BuyRequest(self._args.games)
+
+    def _safe_arg_get(self, func):  # TODO(roeniss): Is this the best...?
+        try:
+            return func()
+        except AttributeError:
+            return None
