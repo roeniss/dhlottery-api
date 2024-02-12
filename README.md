@@ -14,8 +14,13 @@ dhapi buy_lotto645 -q # 자동모드로 5장 구매
 
 ## 구현된 기능
 
-- [로또 6/45](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1)
-    - 자동 구매 1 ~ 5장
+- [로또 6/45 구매](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1) (`buy_lotto645`)
+    - 자동, 수동, 반자동 (일부 번호만 자동으로 할당) 모드로 구매 가능
+    - 한 번에 1 ~ 5장 구매 가능
+    - 여러 모드를 혼합해 구매 가능
+    - 구매 결과 (번호) 를 이메일로 전송 가능 (아래 고급 설정 참고)
+- [예치금 현황 조회](https://dhlottery.co.kr/userSsl.do?method=myPage) (`show_balance`)
+    - 총예치금, 구매가능금액, 예약구매금액, 출금신청중금액, 구매불가능금액, 이번달누적구매금액 출력
 
 ## 고급 설정
 
