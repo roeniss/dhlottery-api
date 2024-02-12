@@ -1,8 +1,7 @@
 name: Add verion tag and Publish to PyPI
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   tag:
