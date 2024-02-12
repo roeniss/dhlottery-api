@@ -7,6 +7,6 @@ def entrypoint():
 
     if arg_parser.command() == "BUY_LOTTO645":
         ctrl = build_lotto645_controller(arg_parser)
-        ctrl.buy(arg_parser.buy_lotto645_req(), arg_parser.is_quiet(), arg_parser.send_result_to_email())
+        ctrl.buy(arg_parser.buy_lotto645_req(), arg_parser.is_always_yes(), arg_parser.send_result_to_email())
     else:
         raise NotImplementedError("Not implemented yet")

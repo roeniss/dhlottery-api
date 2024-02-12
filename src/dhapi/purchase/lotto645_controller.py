@@ -12,8 +12,8 @@ class Lotto645Controller:
         self.client = lottery_client
         self.email_client = email_client
 
-    def buy(self, req: Lotto645BuyRequest, quiet: bool = False, send_result_to_email: bool = False):
-        if not self._confirm_purchase(req, quiet):
+    def buy(self, req: Lotto645BuyRequest, always_yes: bool = False, send_result_to_email: bool = False):
+        if not self._confirm_purchase(req, always_yes):
             logger.info("✅ 구매를 취소했습니다.")
             return
 
@@ -25,15 +25,15 @@ class Lotto645Controller:
             return
         logger.info(result_text)
 
-    def _confirm_purchase(self, req, quiet):
+    def _confirm_purchase(self, req, always_yes):
         print(
             f"""{req.format()}
 ❓ 위와 같이 구매하시겠습니까? [Y/n] """,
             end="",
         )
 
-        if quiet:
-            logger.info("yes\n✅ --quiet 플래그가 주어져 자동으로 구매를 진행합니다.")
+        if always_yes:
+            logger.info("yes\n✅ --yes 플래그가 주어져 자동으로 구매를 진행합니다.")
             return True
         else:
             answer = input().strip().lower()

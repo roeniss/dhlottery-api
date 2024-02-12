@@ -72,7 +72,7 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         )
 
         # -q
-        buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
+        buy_lotto645.add_argument("-y", "--yes", action="store_true", help="구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
 
         # -e
         buy_lotto645.add_argument("-e", "--email", required=False, help="구매 결과를 콘솔로 출력하는 대신, 입력된 이메일로 전송합니다.")
@@ -123,8 +123,8 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
     def send_result_to_email(self):
         return self._args.email is not None
 
-    def is_quiet(self):
-        return self._args.quiet
+    def is_always_yes(self):
+        return self._args.yes
 
     def command(self):
         if self._args.command == "buy_lotto645":
