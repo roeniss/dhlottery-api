@@ -132,11 +132,11 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
     def is_debug(self):
         return self._args.debug
 
-    def user_id(self):
-        return self._args.username
-
-    def user_pw(self):
-        return self._args.password
+    def user_source(self):
+        return {
+            "user_id": self._args.username,
+            "user_pw": self._args.password,
+        }
 
     def email_source(self):
         return {
