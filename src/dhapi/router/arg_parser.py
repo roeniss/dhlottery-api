@@ -71,10 +71,6 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             help="지정하지 않으면 'default' 프로필을 사용합니다.",
         )
 
-        # -u
-        # deprecated
-        buy_lotto645.add_argument("-u", "--username", required=False, help="동행복권 아이디입니다. (deprecated; -p 옵션 사용 권장)")
-
         # -q
         buy_lotto645.add_argument("-q", "--quiet", action="store_true", help="플래그 설정 시 구매 전 확인 절차를 스킵합니다.")  # "store_true" means "set default to False"
 
@@ -86,13 +82,9 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
 
         self._args = parser.parse_args()
 
-        if self._args.username:
-            # deprecated
-            self._args.password = getpass.getpass("비밀번호를 입력하세요: ")
-        else:
-            credentials = get_credentials(self.profile())
-            self._args.username = credentials.get("username")
-            self._args.password = credentials.get("password")
+        credentials = get_credentials(self.profile())
+        self._args.username = credentials.get("username")
+        self._args.password = credentials.get("password")
 
         if self._args.email:
             credentials = get_credentials(self.profile())
