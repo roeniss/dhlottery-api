@@ -35,9 +35,10 @@ make lintfmt
 
 이 작업은 메인테이너가 진행합니다.
 
-1. main 브랜치에서 [VERSION](./VERSION) 을 수정한 후 publish 브랜치로 PR 생성합니다.
-2. CI가 통과되고 머지되면 배포를 위한 워크플로우가 진행됩니다. 이 과정에서 git tag가 생성됩니다.
-3. 생성된 tag로 GitHub Release를 생성합니다.
+1. main 브랜치에서 [VERSION](./VERSION) 을 수정한 후 master 브랜치로 PR 생성합니다.
+2. CI가 통과되고 머지되면 배포를 위한 GitHub Actions 워크플로우가 진행됩니다. 이 과정에서 git tag가 생성됩니다.
+3. tag 생성이 진행되면 바로 Pypi 에 새 버전 배포가 진행됩니다. 여기까지가 GitHub Actions 워크플로우 과정입니다.
+4. 생성된 tag로 GitHub Release를 생성합니다.
 
 ### 참고자료
 

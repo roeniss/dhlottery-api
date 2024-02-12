@@ -2,7 +2,7 @@ name: Add verion tag and Publish to PyPI
 
 on:
   push:
-    branches: [ "publish" ]
+    branches: [ "main" ]
 
 jobs:
   tag:
