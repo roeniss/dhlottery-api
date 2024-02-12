@@ -3,8 +3,8 @@ import sys
 
 from dhapi.configuration.logger import set_logger
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
-from dhapi.router.credentials_provider import get_credentials
 from dhapi.meta.version_provider import get_installed_version
+from dhapi.router.credentials_provider import get_credentials
 
 
 class HelpOnErrorParser(argparse.ArgumentParser):
@@ -112,20 +112,16 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
     def user_pw(self):
         return self._args.password
 
-    def email(self):
-        return self._args.email
-
-    def mailjet_api_key(self):
-        return self._args.mailjet_api_key
-
-    def mailjet_api_secret(self):
-        return self._args.mailjet_api_secret
-
-    def mailjet_sender_email(self):
-        return self._args.mailjet_sender_email
+    def email_source(self):
+        return {
+            "recipient_email": self._args.email,
+            "sender_email": self._args.mailjet_sender_email,
+            "api_key": self._args.mailjet_api_key,
+            "api_secret": self._args.mailjet_api_secret,
+        }
 
     def send_result_to_email(self):
-        return self.email() is not None
+        return self._args.email is not None
 
     def is_quiet(self):
         return self._args.quiet
