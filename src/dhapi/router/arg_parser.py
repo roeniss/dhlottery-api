@@ -4,7 +4,7 @@ import sys
 
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 from dhapi.router.credentials_provider import get_credentials
-from dhapi.router.version_provider import get_installed_version
+from dhapi.meta.version_provider import get_installed_version
 
 
 class HelpOnErrorParser(argparse.ArgumentParser):
