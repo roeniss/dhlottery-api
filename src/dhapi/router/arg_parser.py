@@ -87,7 +87,13 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         show_balance = command_subparser.add_parser(
             "show_balance",
             help="예치금 현황 조회",
-            epilog="",
+            epilog="""
+
+[show_balance 명령어 사용 예시]
+
+dhapi show_balance
+
+""",
         )
 
         show_balance.formatter_class = argparse.RawTextHelpFormatter
