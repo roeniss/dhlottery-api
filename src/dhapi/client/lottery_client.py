@@ -40,6 +40,7 @@ class LotteryClient:
             "X-Requested-With": "XMLHttpRequest",
         }
         self._set_default_session()
+        self.login()
 
     # 로그인을 시도하면 새로운 JSESSIONID 값이 내려오는데,
     #  이 값으로 갱신하면 로그인이 풀리는 듯하여 헤더를 갱신하지 않음

@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 class Lotto645Controller:
     def __init__(self, lottery_client: LotteryClient, email_client: MailjetEmailClient):
         self.client = lottery_client
-        self.client.login()
         self.email_client = email_client
 
     def buy(self, req: Lotto645BuyRequest, quiet: bool = False, send_result_to_email: bool = False):
