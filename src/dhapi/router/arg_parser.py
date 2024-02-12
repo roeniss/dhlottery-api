@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+from dhapi.configuration.logger import set_logger
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 from dhapi.router.credentials_provider import get_credentials
 from dhapi.meta.version_provider import get_installed_version
@@ -80,6 +81,8 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
         buy_lotto645.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
 
         self._args = parser.parse_args()
+
+        set_logger(self.is_debug())
 
         credentials = get_credentials(self.profile())
         self._args.username = credentials.get("username")
