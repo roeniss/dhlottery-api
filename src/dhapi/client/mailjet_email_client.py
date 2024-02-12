@@ -25,10 +25,10 @@ class MailjetEmailClient:
         }
 
         result = self._mailjet.send.create(data=data)
+
         logging.debug(result.json())
 
         if result.status_code == 200:
-            logger.info("메일 전송에 성공했습니다.")
+            logger.info("✉️ 메일 전송에 성공했습니다.")
         else:
-            logger.error(f"메일 전송에 실패했습니다. (result: {result.json()})")
-            raise RuntimeError(f"메일 전송에 실패했습니다. (status_code: {result.status_code})")
+            logger.error(f"❗ 메일 전송에 실패했습니다. (result: {result.json()})")
