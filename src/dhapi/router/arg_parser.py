@@ -101,6 +101,10 @@ dhapi buy_lotto645 -g 1,2,3,4,5,6 -g 5,6,7 -g -g
             self._args.mailjet_sender_email = credentials.get("mailjet_sender_email")
             if not self._args.mailjet_api_key or not self._args.mailjet_api_secret or not self._args.mailjet_sender_email:
                 raise RuntimeError("Mailjet API Key/Secret 정보가 없습니다.")
+        else:
+            self._args.mailjet_api_key = None
+            self._args.mailjet_api_secret = None
+            self._args.mailjet_sender_email = None
 
     def profile(self):
         return self._args.profile
