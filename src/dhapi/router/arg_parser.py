@@ -1,5 +1,4 @@
 import argparse
-import getpass
 import sys
 
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
