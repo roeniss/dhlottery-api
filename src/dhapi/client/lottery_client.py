@@ -1,5 +1,7 @@
 import json
 import logging
+import traceback
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -17,10 +19,11 @@ class LotteryClient:
     _buy_lotto645_url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do"
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
+    _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
 
     def __init__(self, user_id: str, user_pw: str):
-        self.user_id = user_id
-        self.user_pw = user_pw
+        self._user_id = user_id
+        self._user_pw = user_pw
         self._headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
             "Connection": "keep-alive",
@@ -65,8 +68,8 @@ class LotteryClient:
             headers=self._headers,
             data={
                 "returnUrl": LotteryClient._main_url,
-                "userId": self.user_id,
-                "password": self.user_pw,
+                "userId": self._user_id,
+                "password": self._user_pw,
                 "checkSave": "off",
                 "newsEventYn": "",
             },
@@ -117,3 +120,34 @@ class LotteryClient:
         logger.debug(f"resp.text: {resp.text}")
 
         return json.loads(resp.text)
+
+    def get_balance(self):
+        resp = requests.get(self._cash_balance, headers=self._headers, timeout=10)
+        soup = BeautifulSoup(resp.text, "html5lib")
+
+        elem = soup.select("div.box.money")
+        try:
+            elem = elem[0]
+
+            총예치금 = self._parse_digit(elem.select("p.total_new > strong")[0].contents[0])
+            구매가능금액 = self._parse_digit(elem.select("td.ta_right")[3].contents[0])
+            예약구매금액 = self._parse_digit(elem.select("td.ta_right")[4].contents[0])
+            출금신청중금액 = self._parse_digit(elem.select("td.ta_right")[5].contents[0])
+            구매불가능금액 = self._parse_digit(elem.select("td.ta_right")[6].contents[0])  # (예약구매금액 + 출금신청중금액)
+            이번달누적구매금액 = self._parse_digit(elem.select("td.ta_right")[7].contents[0])
+
+            return {
+                "총예치금": 총예치금,
+                "구매가능금액": 구매가능금액,
+                "예약구매금액": 예약구매금액,
+                "출금신청중금액": 출금신청중금액,
+                "구매불가능금액": 구매불가능금액,
+                "이번달누적구매금액": 이번달누적구매금액,
+            }
+        except IndexError:
+            logger.debug(traceback.format_exc())
+            logger.error("❗ 잔액 정보를 가져오지 못했습니다.")
+            return {}
+
+    def _parse_digit(self, text):
+        return int("".join(filter(str.isdigit, text)))

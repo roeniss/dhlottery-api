@@ -4,6 +4,8 @@ from dhapi.client.lottery_client import LotteryClient
 from dhapi.client.mailjet_email_client import MailjetEmailClient
 from dhapi.domain_object.lotto645_buy_request import Lotto645BuyRequest
 
+from dhapi.purchase.dhlottery_balance_formatter import format_balance
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,6 +26,16 @@ class Lotto645Controller:
             self.email_client.send_email("동행복권 645 로또 구매 결과", result_text)
             return
         logger.info(result_text)
+
+    def show_balance(self):
+        balance = self.client.get_balance()
+
+        formatted_balance = format_balance(**balance)
+
+        logger.info(
+            f"""✅ 예치금 현황
+{formatted_balance}"""
+        )
 
     def _confirm_purchase(self, req, quiet):
         print(
