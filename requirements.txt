@@ -19,3 +19,4 @@ mailjet-rest==1.3.4
 tabulate==0.9.0
 pytz==2024.1
 typer==0.9.0
+rich==13.7.0
