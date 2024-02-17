@@ -110,6 +110,37 @@ dhapi show_balance
         # -d
         show_balance.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
 
+        ## assign_virtual_account section # TODO(roeniss): Better way for DRY???
+
+        assign_virtual_account = command_subparser.add_parser(
+            "assign_virtual_account",
+            help="예치금 현황 조회",
+            epilog="""
+
+[assign_virtual_account 명령어 사용 예시]
+
+dhapi assign_virtual_account -a 10000
+
+        """,
+        )
+
+        assign_virtual_account.formatter_class = argparse.RawTextHelpFormatter
+
+        # -a
+        assign_virtual_account.add_argument("-a", "--amount", help="충전할 금액을 입력합니다. (선택지: 5000, 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000, 700000, 1000000)")
+
+        # -p
+        assign_virtual_account.add_argument(
+            "-p",
+            "--profile",
+            required=False,
+            default="default",
+            help="지정하지 않으면 'default' 프로필을 사용합니다.",
+        )
+
+        # -d
+        assign_virtual_account.add_argument("-d", "--debug", action="store_true", help="로그 출력 레벨을 debug로 세팅합니다.")  # "store_true" means "set default to False"
+
         ## common section
 
         self._args = parser.parse_args()
@@ -157,6 +188,9 @@ dhapi show_balance
 
     def is_quiet(self):
         return self._args.quiet
+
+    def amount(self):
+        return int(self._args.amount)
 
     def command(self):
         return self._args.command.upper()
