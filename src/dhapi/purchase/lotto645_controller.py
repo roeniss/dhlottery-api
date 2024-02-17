@@ -21,7 +21,7 @@ class Lotto645Controller:
 
         result = self.client.buy_lotto645(req)
 
-        result_text = self._make_result_text(result)
+        result_text = self._make_result_text_for_buy(result)
         if send_result_to_email:
             self.email_client.send_email("동행복권 645 로또 구매 결과", result_text)
             return
@@ -37,6 +37,14 @@ class Lotto645Controller:
 {formatted_balance}"""
         )
 
+    def assign_virtual_account(self, amount):
+        result = self.client.assign_virtual_account(amount)
+
+        result_text = self._make_result_text_for_assign_virtual_account(**result)
+
+        logger.info(result_text)
+
+
     def _confirm_purchase(self, req, quiet):
         print(
             f"""{req.format()}
@@ -51,8 +59,7 @@ class Lotto645Controller:
             answer = input().strip().lower()
             return answer in ["y", "yes", ""]
 
-    # ID가 다른 경우 loginYn이 N으로 나옴
-    def _make_result_text(self, body: dict) -> str:
+    def _make_result_text_for_buy(self, body: dict) -> str:
         result = body.get("result", {})
         if result.get("resultMsg", "FAILURE").upper() != "SUCCESS":
             logger.debug(f"d: {body}")
@@ -68,6 +75,14 @@ Barcode:\t{result["barCode1"]} {result["barCode2"]} {result["barCode3"]} {result
 Cost:\t\t{result["nBuyAmount"]}
 Numbers:\n{self._format_lotto_numbers(result["arrGameChoiceNum"])}
 Message:\t{result["resultMsg"]}
+----------------------"""
+
+    def _make_result_text_for_assign_virtual_account(self, 고정가상계좌, 결제금액) -> str:
+        return f"""[가상계좌정보]
+이 계좌에 지정된 금액을 입금해주세요 (계좌주 이름을 꼭 확인하세요).
+------------------
+고정가상계좌:\t\t{고정가상계좌}
+결제금액:\t\t{결제금액}
 ----------------------"""
 
     def _format_lotto_numbers(self, lines: list) -> str:

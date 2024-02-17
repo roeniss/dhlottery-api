@@ -1,7 +1,9 @@
+import datetime
 import json
 import logging
 import traceback
 
+import pytz
 import requests
 from bs4 import BeautifulSoup
 
@@ -20,6 +22,8 @@ class LotteryClient:
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
     _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
+    _assign_virtual_account_1 = "https://dhlottery.co.kr/nicePay.do?method=nicePayInit"
+    _assign_virtual_account_2 = "https://dhlottery.co.kr/nicePay.do?method=nicePayProcess"
 
     def __init__(self, user_id: str, user_pw: str):
         self._user_id = user_id
@@ -151,3 +155,73 @@ class LotteryClient:
 
     def _parse_digit(self, text):
         return int("".join(filter(str.isdigit, text)))
+
+    def assign_virtual_account(self, amount):
+        if amount not in [5000, 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000, 700000, 1000000]:
+            raise RuntimeError("충전 가능한 금액 단위가 아닙니다. 5000, 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000, 700000, 1000000 원 중 하나를 입력해주세요.")
+
+        resp = requests.post(self._assign_virtual_account_1,
+                             headers=self._headers,
+                             data={
+                                 "PayMethod": "VBANKFVB01",
+                                 "VbankBankCode": "089",  # 가상계좌 채번가능 케이뱅크 코드
+                                 "price": str(amount),
+                                 "goodsName": "복권예치금",
+                                 "vExp": self._get_tomorrow()
+                             },
+                             timeout=10)
+        logger.debug(f"status_code: {resp.status_code}")
+
+        data = resp.json()
+        logger.debug(f"data: {data}")
+
+        body = {
+            "PayMethod": data["PayMethod"],
+            "GoodsName": data["GoodsName"],
+            "GoodsCnt": data["GoodsCnt"],
+            "BuyerTel": data["BuyerTel"],
+            "Moid": data["Moid"],
+            "MID": data["MID"],
+            "UserIP": data["UserIP"],
+            "MallIP": data["MallIP"],
+            "MallUserID": data["MallUserID"],
+            "VbankExpDate": data["VbankExpDate"],
+            "BuyerEmail": data["BuyerEmail"],
+            "SocketYN": data["SocketYN"],
+            "GoodsCl": data["GoodsCl"],
+            "EncodeParameters": data["EncodeParameters"],
+            "EdiDate": data["EdiDate"],
+            "EncryptData": data["EncryptData"],
+            "Amt": data["amt"],
+            "BuyerName": data["BuyerName"],
+            "VbankBankCode": data["VbankBankCode"],
+            "VbankNum": data["FxVrAccountNo"],
+            "FxVrAccountNo": data["FxVrAccountNo"],
+            "VBankAccountName": data["BuyerName"],
+            "svcInfoPgMsgYn": "N",
+            "OptionList": "no_receipt",
+            "TransType": "0",  # 일반(0), 에스크로(1)
+            "TrKey": None,
+        }
+        logger.debug(f"body: {body}")
+
+        resp = requests.post(self._assign_virtual_account_2, headers=self._headers, data=body, timeout=10)
+        logger.debug(f"resp: {resp}")
+
+        soup = BeautifulSoup(resp.text, "html5lib")
+
+        elem = soup.select("#contents")
+
+        고정가상계좌 = elem[0].select("span")[0].contents[0]
+        결제금액 = elem[0].select(".color_key1")[0].contents[0]
+
+        return {
+            "고정가상계좌": 고정가상계좌,
+            "결제금액": 결제금액,
+        }
+
+    def _get_tomorrow(self):
+        korea_tz = pytz.timezone('Asia/Seoul')
+        now = datetime.datetime.now(korea_tz)
+        tomorrow = now + datetime.timedelta(days=1)
+        return tomorrow.strftime("%Y%m%d")
