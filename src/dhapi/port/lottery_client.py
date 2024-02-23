@@ -127,7 +127,7 @@ class LotteryClient:
             slots = self._format_lotto_numbers(response["result"]["arrGameChoiceNum"])
             self._lottery_endpoint.print_result_of_buy_lotto645(slots)
         except Exception:
-            raise RuntimeError("❗ 로또 6/45 구매에 실패했습니다.")
+            raise RuntimeError("❗ 로또6/45 구매에 실패했습니다.")
 
     def _make_buy_loyyo645_param(self, tickets: List[Lotto645Ticket]):
         params = []
