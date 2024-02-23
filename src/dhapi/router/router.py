@@ -1,18 +1,101 @@
-from dhapi.router.arg_parser import ArgParser
-from dhapi.router.dependency_factory import build_lotto645_controller
+from typing import Annotated, Optional, List
+
+import typer
+
+from dhapi.config.logger import set_logger
+from dhapi.domain.deposit import Deposit
+from dhapi.domain.lotto645_ticket import Lotto645Ticket
+from dhapi.port.credentials_provider import CredentialsProvider
+from dhapi.router.dependency_factory import build_lottery_client, build_version_provider, build_lotto645_buy_confirmer
+
+app = typer.Typer(
+    help="동행복권 비공식 API\n\n각 명령어에 대한 자세한 도움말은 'dhapi [명령어] -h'를 입력하세요.",
+    context_settings={"help_option_names": ["-h", "--help"]},
+    pretty_exceptions_show_locals=False,
+    pretty_exceptions_enable=False,
+    add_completion=False,
+)
+
+
+def logger_callback(is_debug: bool):
+    app.pretty_exceptions_enable = is_debug
+    set_logger(is_debug)
+
+
+def version_callback(show_version: Optional[str]):
+    if show_version:
+        version_provider = build_version_provider()
+        version_provider.show_version()
+        raise typer.Exit()
+
+
+@app.command(
+    help="""
+예치금 충전용 가상계좌를 세팅합니다.
+
+dhapi에서는 본인 전용 계좌를 발급받는 것까지만 가능합니다. 출력되는 계좌로 직접 입금해주세요.
+"""
+)
+def assign_virtual_account(
+    amount: Annotated[
+        int, typer.Argument(help="입금할 금액을 지정합니다 (5천원, 1만원, 2만원, 3만원, 5만원, 10만원, 20만원, 30만원, 50만원, 70만원, 100만원 중 하나)", metavar="amount")
+    ] = 50000,
+    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+    _version: Annotated[Optional[bool], typer.Option("-v", "--version", help="Show version and exit.", callback=version_callback, is_eager=True)] = None,
+):
+    user = CredentialsProvider(profile).get_user()
+    deposit = Deposit(amount)
+
+    client = build_lottery_client(user, None)
+    client.assign_virtual_account(deposit)
+
+
+@app.command(
+    help="""
+예치금 현황을 조회합니다.
+"""
+)
+def show_balance(
+    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+    _version: Annotated[Optional[bool], typer.Option("-v", "--version", help="Show version and exit.", callback=version_callback, is_eager=True)] = None,
+):
+    user = CredentialsProvider(profile).get_user()
+
+    client = build_lottery_client(user, None)
+    client.show_balance()
+
+
+@app.command(
+    help="""
+로또6/45 복권을 구매합니다.
+
+매 주 최대 다섯 장까지 구매할 수 있습니다.
+"""
+)
+def buy_lotto645(
+    tickets: Annotated[List[str], typer.Argument(help="구매할 번호를 입력합니다. 생략 시 자동모드로 5장 구매합니다.", metavar="tickets", show_default=False)] = None,
+    email: Annotated[str, typer.Option("-e", "--email", metavar="", help="구매 결과를 표준 출력이 아니라 지정한 이메일로 전송합니다.")] = None,
+    always_yes: Annotated[bool, typer.Option("-y", "--yes", help="구매 전 확인 절차를 스킵합니다.")] = False,
+    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+    _version: Annotated[Optional[bool], typer.Option("-v", "--version", help="Show version and exit.", callback=version_callback, is_eager=True)] = None,
+):
+    cred = CredentialsProvider(profile)
+    user = cred.get_user()
+    form = cred.get_email_form(email) if email else None
+    tickets = Lotto645Ticket.create_tickets(tickets) if tickets else Lotto645Ticket.create_auto_tickets(count=5)
+
+    client = build_lottery_client(user, form)
+    confirmer = build_lotto645_buy_confirmer()
+
+    ok = confirmer.confirm(tickets, always_yes)
+    if not ok:
+        raise typer.Exit()
+
+    client.buy_lotto645(tickets)
 
 
 def entrypoint():
-    arg_parser = ArgParser()
-
-    if arg_parser.command() == "BUY_LOTTO645":
-        ctrl = build_lotto645_controller(arg_parser)
-        ctrl.buy(arg_parser.buy_lotto645_req(), arg_parser.is_quiet(), arg_parser.send_result_to_email())
-    elif arg_parser.command() == "SHOW_BALANCE":
-        ctrl = build_lotto645_controller(arg_parser)
-        ctrl.show_balance()
-    elif arg_parser.command() == "ASSIGN_VIRTUAL_ACCOUNT":
-        ctrl = build_lotto645_controller(arg_parser)
-        ctrl.assign_virtual_account(arg_parser.amount())
-    else:
-        raise NotImplementedError("Not implemented yet")
+    app()

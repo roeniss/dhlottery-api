@@ -1,15 +1,11 @@
 from importlib.metadata import version
-import logging
 
 
-PACKAGE_NAME = "dhapi"
+class VersionProvider:
+    def __init__(self, version_endpoint):
+        self._version_endpoint = version_endpoint
+        self._package_name = "dhapi"
 
-logger = logging.getLogger(__name__)
-
-
-def get_installed_version():
-    try:
-        return version(PACKAGE_NAME)
-    except Exception as e:
-        logger.debug(e)
-        return "Failed to load version. Use -d flag for debugging."
+    def show_version(self):
+        package_version = version(self._package_name)
+        self._version_endpoint.print_version(package_version)
