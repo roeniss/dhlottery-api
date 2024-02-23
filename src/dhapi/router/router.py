@@ -11,6 +11,7 @@ from dhapi.router.dependency_factory import build_lottery_client, build_version_
 app = typer.Typer(
     help="동행복권 비공식 API\n\n각 명령어에 대한 자세한 도움말은 'dhapi [명령어] -h'를 입력하세요.",
     context_settings={"help_option_names": ["-h", "--help"]},
+    no_args_is_help=True,
     pretty_exceptions_show_locals=False,
     pretty_exceptions_enable=False,
     add_completion=False,
@@ -22,7 +23,7 @@ def logger_callback(is_debug: bool):
     set_logger(is_debug)
 
 
-def version_callback(show_version: Optional[str]):
+def version_callback(show_version: Optional[bool]):
     if show_version:
         version_provider = build_version_provider()
         version_provider.show_version()
@@ -34,7 +35,7 @@ def version_callback(show_version: Optional[str]):
 예치금 충전용 가상계좌를 세팅합니다.
 
 dhapi에서는 본인 전용 계좌를 발급받는 것까지만 가능합니다. 출력되는 계좌로 직접 입금해주세요.
-"""
+""",
 )
 def assign_virtual_account(
     amount: Annotated[
@@ -42,7 +43,6 @@ def assign_virtual_account(
     ] = 50000,
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
-    _version: Annotated[Optional[bool], typer.Option("-v", "--version", help="Show version and exit.", callback=version_callback, is_eager=True)] = None,
 ):
     user = CredentialsProvider(profile).get_user()
     deposit = Deposit(amount)
@@ -59,7 +59,6 @@ def assign_virtual_account(
 def show_balance(
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
-    _version: Annotated[Optional[bool], typer.Option("-v", "--version", help="Show version and exit.", callback=version_callback, is_eager=True)] = None,
 ):
     user = CredentialsProvider(profile).get_user()
 
@@ -71,7 +70,21 @@ def show_balance(
     help="""
 로또6/45 복권을 구매합니다.
 
-매 주 최대 다섯 장까지 구매할 수 있습니다.
+매주 최대 다섯 장까지 구매할 수 있습니다 (5 tickets).
+
+[예시]
+
+dhapi buy-lotto645 : 자동모드 5장 (default)
+
+dhapi buy-lotto645 '' : 자동모드 1장
+
+dhapi buy-lotto645 '1,2,3,4,5,6' : 수동모드 1장 (고정번호: 1,2,3,4,5,6)
+
+dhapi buy-lotto645 '1,2,3' : 반자동모드 1장 (고정번호: 1,2,3)
+
+dhapi buy-lotto645 '1,2,3,4,5,6' '7,8,9' : 수동모드 1장 (고정번호: 1,2,3,4,5,6), 반자동모드 1장 (고정번호: 7,8,9)
+
+dhapi buy-lotto645 '' '' '' '1' : 자동모드 3장, 반자동모드 1장 (고정번호: 1)ㄴㄴ
 """
 )
 def buy_lotto645(
@@ -80,7 +93,6 @@ def buy_lotto645(
     always_yes: Annotated[bool, typer.Option("-y", "--yes", help="구매 전 확인 절차를 스킵합니다.")] = False,
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
-    _version: Annotated[Optional[bool], typer.Option("-v", "--version", help="Show version and exit.", callback=version_callback, is_eager=True)] = None,
 ):
     cred = CredentialsProvider(profile)
     user = cred.get_user()
@@ -95,6 +107,15 @@ def buy_lotto645(
         raise typer.Exit()
 
     client.buy_lotto645(tickets)
+
+
+@app.command(
+    help="""
+dhapi 버전을 출력합니다.
+"""
+)
+def version():
+    version_callback(True)
 
 
 def entrypoint():
