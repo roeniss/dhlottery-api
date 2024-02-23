@@ -78,10 +78,6 @@ mailjet_sender_email = "YOUR_MAILJET_EMAIL"
 >
 > 따로 세팅을 하지 않은 상태로 별도의 이메일을 기입하게 되면, 실제 메일이 발송되지 않고 'Senders and domains page'를 확인하라는 안내 메일을 받게 됩니다.
 
-## 기여하기
-
-기여는 대환영입니다! [CONTRIBUTING.md](/docs/CONTRIBUTING.md) 파일을 참고해주세요.
-
 ## 기부하기
 
 이 프로그램을 사용해서 1등에 당첨된다면, 저에게 꼭 1000만원을 기부해주시길 바랍니다.
@@ -91,3 +87,7 @@ mailjet_sender_email = "YOUR_MAILJET_EMAIL"
 그리고 딱히 당첨된 적은 없지만 그래도 커피를 사주고 싶다면, 절대 망설이지 마십시오.
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/roeniss)
+
+## 기여하기
+
+기여는 대환영입니다! [CONTRIBUTING.md](/docs/CONTRIBUTING.md) 파일을 참고해주세요.
