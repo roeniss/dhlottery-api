@@ -24,7 +24,7 @@ class CredentialsProvider:
         return User(self._get("username"), self._get("password"))
 
     def get_email_form(self, recipient_email: str) -> EmailForm:
-        return EmailForm(self._get("mailjet_api_key"), self._get("mailjet_api_secret"), self._get("_sender_email"), recipient_email)
+        return EmailForm(self._get("mailjet_api_key"), self._get("mailjet_api_secret"), self._get("mailjet_sender_email"), recipient_email)
 
     def _get_credentials(self, profile_name):
         try:
