@@ -77,7 +77,7 @@ mailjet_sender_email = "YOUR_MAILJET_EMAIL"
 이메일 전송이 필요한 프로필에만 세팅하면 됩니다.
 
 > [!WARNING]  
-> `mailjet_sender_email` 값은 '발신 이메일 주소'로 활용되며, Mailjet 회원가입에 사용한 이메일이 아닐 경우 추가 세팅을 해야됩니다.
+> `mailjet_sender_email` 값은 '발신 이메일 주소'로 활용되며, Mailjet 회원가입에 사용한 이메일이 아닐 경우 Mailjet 사이트에서 추가로 도메인 인증 절차를 거쳐야 합니다.
 >
 > 따로 세팅을 하지 않은 상태로 별도의 이메일을 기입하게 되면, 실제 메일이 발송되지 않고 'Senders and domains page'를 확인하라는 안내 메일을 받게 됩니다.
 
