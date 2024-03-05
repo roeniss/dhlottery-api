@@ -124,10 +124,18 @@ class LotteryClient:
             logger.debug(f"response: {response_text}")
 
             response = json.loads(response_text)
+            if not self._is_purchase_success(response):
+                raise RuntimeError(f"❗ 로또6/45 구매에 실패했습니다. (사유: {response['result']['resultMsg']})")
+
             slots = self._format_lotto_numbers(response["result"]["arrGameChoiceNum"])
             self._lottery_endpoint.print_result_of_buy_lotto645(slots)
+        except RuntimeError as e:
+            raise e
         except Exception:
-            raise RuntimeError("❗ 로또6/45 구매에 실패했습니다.")
+            raise RuntimeError("❗ 로또6/45 구매에 실패했습니다. (사유: 알 수 없는 오류)")
+
+    def _is_purchase_success(self, response):
+        return response["result"]["resultCode"] == "100"
 
     def _make_buy_loyyo645_param(self, tickets: List[Lotto645Ticket]):
         params = []
