@@ -18,8 +18,7 @@ dhapi buy-lotto645 -y # '로또6/45' 자동모드로 5장 구매 & 확인절차 
 - [로또6/45 구매](https://dhlottery.co.kr/gameInfo.do?method=gameMethod&wiselog=H_B_1_1) (`buy-lotto645`)
     - 자동, 수동, 반자동 모드로 구매 가능합니다.
     - 한 번에 최대 5장까지 구매 가능합니다.
-    - 매주 최대 5장까지 구매 가능합니다 (온라인 구매 제약사항입니다).
-    - 구매한 내역을 이메일로 전송할 수 있습니다. 고급 설정 섹션을 참고해주세요.
+    - 매주 최대 5장까지 구매 가능합니다 (동행복권 측의 온라인 구매 관련 정책입니다).
 - [예치금 현황 조회](https://dhlottery.co.kr/userSsl.do?method=myPage) (`show-balance`)
     - 현재 보유한 예치금 정보를 조회합니다.
 - [고정 가상계좌 입금을 위한 세팅](https://dhlottery.co.kr/userSsl.do?method=myPage) (`assign-virtual-account`)
@@ -51,41 +50,9 @@ password = "dhlotter_second_pw"
 
 이후 `-p` 플래그로 프로필을 골라 사용합니다.
 
-### 이메일로 결과 전송 하기
-
-> [!IMPORTANT]  
-> 아래 세팅대로 진행한다면 구매 결과를 담은 이메일이 아주 높은 확률로 스팸 메일함에 들어갑니다. 이럴 경우 해당 메일을 찾아서 '스팸이 아님' 체크를 해야 이후 메일들이 일반 메일함에 들어갑니다.
-
-
-`-e` 플래그로 수신할 이메일을 지정합니다. 이렇게 하면 **콘솔에 결과가 출력되지 않고 지정한 이메일로 전송됩니다.** 아래 세팅이 추가적으로 필요합니다.
-
-무료로 이메일을 보내기 위해 [Mailjet](https://www.mailjet.com/)을 사용합니다. 가입한 후, API KEY, SECRET KEY 를 발급합니다 (https://app.mailjet.com/account/apikeys).
-
-키 정보를 ~/.dhapi/credentials 파일에 다음과 같이 기입합니다.
-
-```text
-[default]
-username = "dhlotter_id"
-password = "dhlotter_pw"
-mailjet_api_key = "YOUR_API_KEY"
-mailjet_api_secret = "YOUR_SECRET_KEY"
-mailjet_sender_email = "YOUR_MAILJET_EMAIL"
-[another_profile]
-...
-```
-
-이메일 전송이 필요한 프로필에만 세팅하면 됩니다.
-
-> [!WARNING]  
-> `mailjet_sender_email` 값은 '발신 이메일 주소'로 활용되며, Mailjet 회원가입에 사용한 이메일이 아닐 경우 Mailjet 사이트에서 추가로 도메인 인증 절차를 거쳐야 합니다.
->
-> 따로 세팅을 하지 않은 상태로 별도의 이메일을 기입하게 되면, 실제 메일이 발송되지 않고 'Senders and domains page'를 확인하라는 안내 메일을 받게 됩니다.
-
 ## 기부하기
 
 이 프로그램을 사용해서 1등에 당첨된다면, 저에게 꼭 1000만원을 기부해주시길 바랍니다.
-
-<img alt="Toss Donation QR Code" src="https://github.com/roeniss/dhlottery-api/blob/b4d616033099f4c0fe38a5360017465fc88ff618/docs/toss_donation_qr.png?raw=true" width="300" />
 
 그리고 딱히 당첨된 적은 없지만 그래도 커피를 사주고 싶다면, 절대 망설이지 마십시오.
 
