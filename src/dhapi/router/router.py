@@ -38,16 +38,16 @@ dhapi에서는 본인 전용 계좌를 발급받는 것까지만 가능합니다
 """,
 )
 def assign_virtual_account(
-    amount: Annotated[
-        int, typer.Argument(help="입금할 금액을 지정합니다 (5천원, 1만원, 2만원, 3만원, 5만원, 10만원, 20만원, 30만원, 50만원, 70만원, 100만원 중 하나)", metavar="amount")
-    ] = 50000,
-    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
-    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+        amount: Annotated[
+            int, typer.Argument(help="입금할 금액을 지정합니다 (5천원, 1만원, 2만원, 3만원, 5만원, 10만원, 20만원, 30만원, 50만원, 70만원, 100만원 중 하나)", metavar="amount")
+        ] = 50000,
+        profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+        _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
 ):
     user = CredentialsProvider(profile).get_user()
     deposit = Deposit(amount)
 
-    client = build_lottery_client(user, None)
+    client = build_lottery_client(user)
     client.assign_virtual_account(deposit)
 
 
@@ -57,12 +57,12 @@ def assign_virtual_account(
 """
 )
 def show_balance(
-    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
-    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+        profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+        _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
 ):
     user = CredentialsProvider(profile).get_user()
 
-    client = build_lottery_client(user, None)
+    client = build_lottery_client(user)
     client.show_balance()
 
 
@@ -88,18 +88,16 @@ dhapi buy-lotto645 '' '' '' '1' : 자동모드 3장, 반자동모드 1장 (고�
 """
 )
 def buy_lotto645(
-    tickets: Annotated[List[str], typer.Argument(help="구매할 번호를 입력합니다. 생략 시 자동모드로 5장 구매합니다.", metavar="tickets", show_default=False)] = None,
-    email: Annotated[str, typer.Option("-e", "--email", metavar="", help="구매 결과를 표준 출력이 아니라 지정한 이메일로 전송합니다.")] = None,
-    always_yes: Annotated[bool, typer.Option("-y", "--yes", help="구매 전 확인 절차를 스킵합니다.")] = False,
-    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
-    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+        tickets: Annotated[List[str], typer.Argument(help="구매할 번호를 입력합니다. 생략 시 자동모드로 5장 구매합니다.", metavar="tickets", show_default=False)] = None,
+        always_yes: Annotated[bool, typer.Option("-y", "--yes", help="구매 전 확인 절차를 스킵합니다.")] = False,
+        profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+        _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
 ):
     cred = CredentialsProvider(profile)
     user = cred.get_user()
-    form = cred.get_email_form(email) if email else None
     tickets = Lotto645Ticket.create_tickets(tickets) if tickets else Lotto645Ticket.create_auto_tickets(count=5)
 
-    client = build_lottery_client(user, form)
+    client = build_lottery_client(user)
     confirmer = build_lotto645_buy_confirmer()
 
     ok = confirmer.confirm(tickets, always_yes)

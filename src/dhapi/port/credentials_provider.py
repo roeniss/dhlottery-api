@@ -4,7 +4,6 @@ import os
 import tomli
 import tomli_w
 
-from dhapi.domain.email_form import EmailForm
 from dhapi.domain.user import User
 
 logger = logging.getLogger(__name__)
@@ -22,9 +21,6 @@ class CredentialsProvider:
 
     def get_user(self) -> User:
         return User(self._get("username"), self._get("password"))
-
-    def get_email_form(self, recipient_email: str) -> EmailForm:
-        return EmailForm(self._get("mailjet_api_key"), self._get("mailjet_api_secret"), self._get("mailjet_sender_email"), recipient_email)
 
     def _get_credentials(self, profile_name):
         try:
