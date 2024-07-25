@@ -174,7 +174,7 @@ class LotteryClient:
             slot = {
                 "mode": mode_dict[line[-1]],
                 "slot": line[0],
-                "numbers": line[1:-1].split("|"),
+                "numbers": line[2:-1].split("|"),
             }
             slots.append(slot)
         return slots
