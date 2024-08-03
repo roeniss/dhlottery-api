@@ -4,7 +4,7 @@
 
 [동행복권](https://dhlottery.co.kr/) 사이트를 터미널에서 이용할 수 있게 랩핑한 API입니다.
 
-https://github.com/roeniss/dhlottery-api/raw/683239bedb06b0f59578ad98a952002e69f48163/docs/dhapi%20sample%20-%20starting%20with%20version.mp4
+https://github.com/roeniss/dhlottery-api/raw/main/docs/dhapi%20sample%20-%20starting%20with%20version.mp4
 
 ### 설치 밎 사용법
 
