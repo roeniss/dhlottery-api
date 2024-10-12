@@ -9,7 +9,8 @@ https://github.com/user-attachments/assets/0be65454-8025-4fff-aa29-f88bc5948b43
 ### 설치 밎 사용법
 
 ```sh
-pip install dhapi --upgrade # pip 최신 버전을 권장합니다: pip install --upgrade pip
+# pip install dhapi --upgrade # pip 최신 버전을 권장합니다: pip install --upgrade pip
+pip install -e . # 현재 프로젝트 경로의 src를 심볼릭 링크로 그대로 사용하는 패키지 설치하기옴
 dhapi --help # 기본 도움말 보기 
 dhapi buy-lotto645 --help # '로또6/45' 구매 명령어의 도움말 보기
 dhapi buy-lotto645 -y # '로또6/45' 자동모드로 5장 구매 & 확인절차 스킵
