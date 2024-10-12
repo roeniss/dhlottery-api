@@ -1,9 +1,5 @@
 import logging
 from typing import List
-
-from rich.console import Console
-from rich.table import Table
-
 from dhapi.domain.lotto645_ticket import Lotto645Ticket
 
 logger = logging.getLogger(__name__)
@@ -26,16 +22,13 @@ class Lotto645BuyConfirmer:
     def _show_buy_preview(self, tickets):
         slots = "ABCDE"
 
-        console = Console()
-        table = Table("슬롯", "Mode", "번호1", "번호2", "번호3", "번호4", "번호5", "번호6")
+        print("슬롯 | Mode | 번호1 | 번호2 | 번호3 | 번호4 | 번호5 | 번호6")
         for i, ticket in enumerate(tickets):
-            table.add_row(slots[i], ticket.mode_kor, *self._numbers_formatted(ticket.numbers))
-
-        console.print(table)
+            numbers = " | ".join(self._numbers_formatted(ticket.numbers))
+            print(f"{slots[i]} | {ticket.mode_kor} | {numbers}")
 
     def _numbers_formatted(self, numbers: List[int]):
-        _numbers = numbers[::]
-        _numbers = [str(n) for n in _numbers]
+        _numbers = [str(n) for n in numbers]
         for _ in range(6 - len(_numbers)):
             _numbers.append("-")
         return _numbers
