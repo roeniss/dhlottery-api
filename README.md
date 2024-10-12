@@ -64,3 +64,18 @@ password = "dhlotter_second_pw"
 ## 기여하기
 
 기여는 대환영입니다! [CONTRIBUTING.md](/docs/CONTRIBUTING.md) 파일을 참고해주세요.
+
+## 공유 라이브러리로 빌드하기
+### 윈도우(build.bat)
+```
+@echo off
+echo Building dhapi package into shared library
+pip install cython
+python setup.py build_ext --inplace
+echo Build complete!
+pause
+```
+
+```
+build.bat
+```

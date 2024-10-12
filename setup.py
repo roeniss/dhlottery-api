@@ -1,6 +1,6 @@
 import pathlib
-
 from setuptools import find_packages, setup
+from Cython.Build import cythonize  # Import Cython build tools
 
 HERE = pathlib.Path(__file__).parent.resolve()
 
@@ -43,6 +43,9 @@ setup(
             "dhapi=dhapi.main:main",
         ],
     },
+    
+    # Compile with Cython to build shared library
+    ext_modules=cythonize("src/dhapi/main.py", language_level=3),
 
     install_requires=_get_dependencies(),
 )
