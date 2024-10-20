@@ -87,9 +87,14 @@ build.bat
 0. 파이썬 환경 설치
 
 miniconda 설치 후 환경 설치,  
-cmake(pip, conda 모두) 설치,  
+cmake(pip, conda 모두)를 설치하지 않는다.
+
 build-essential 설치.  
 
+```
+sudo apt update
+sudo apt install build-essential
+```
 
 1. openjdk 설치
 
@@ -116,8 +121,20 @@ jdk 설치 확인
 java -version
 ```
 
+2. gcc 컴파일러 설치
 
-2. android sdkmanager 설치
+```
+sudo apt update
+sudo apt install gcc g++ libgcc-10-dev
+```
+gcc 설치 확인
+```
+gcc --version
+which gcc
+find /usr -name libgcc.a
+```
+
+3. android sdkmanager 설치
 
 ```
 https://developer.android.com/tools/sdkmanager?hl=ko
@@ -139,12 +156,13 @@ sdk manager 설치 확인
 ```
 ./sdkmanager --list
 ```
-3. ndk, cmake, platform, arm64-v8a 설치
+4. ndk, cmake, platform, system-images, build-tools 설치
 ```
 sdkmanager --install "ndk;28.0.12433566"
 sdkmanager --install "cmake;3.30.5"
 sdkmanager --install "platforms;android-28" "platforms;android-29" "platforms;android-30" "platforms;android-31" "platforms;android-32" "platforms;android-33" "platforms;android-34" "platforms;android-35"
 sdkmanager --install "system-images;android-28;default;arm64-v8a" "system-images;android-29;default;arm64-v8a" "system-images;android-30;default;arm64-v8a" "system-images;android-31;default;arm64-v8a" "system-images;android-32;default;arm64-v8a" "system-images;android-33;default;arm64-v8a" "system-images;android-34;default;arm64-v8a" "system-images;android-35;google_apis;arm64-v8a"
+sdkmanager "build-tools;28.0.0" "build-tools;29.0.0" "build-tools;30.0.0" "build-tools;31.0.0" "build-tools;32.0.0" "build-tools;33.0.0" "build-tools;34.0.0" "build-tools;35.0.0"
 ```
 ```
 sdkmanager --update
@@ -153,7 +171,35 @@ sdkmanager --update
 sdkmanager --licenses
 ```
 
-4. 빌드하기
+5. 종합적인 환경 변수 등록  
+
+- CMAKE 경로 추가:
+```
+echo 'export PATH="$PATH:/home/southglory/android_sdk/cmake/3.30.5/bin"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+
+- LIBRARY_PATH 추가: clang이 crtbegin_so.o 및 crtend_so.o 같은 파일을 찾을 수 있도록 라이브러리 경로를 설정.
+```
+export LIBRARY_PATH=/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/28:$LIBRARY_PATH
+```
+- C_INCLUDE_PATH 및 CPLUS_INCLUDE_PATH 추가: clang이 NDK 관련 헤더 파일을 찾을 수 있도록 include 경로를 설정.
+```
+export C_INCLUDE_PATH=/home/southglory/android_sdk/ndk/28.0.12433566/sysroot/usr/include:$C_INCLUDE_PATH
+export CPLUS_INCLUDE_PATH=/home/southglory/android_sdk/ndk/28.0.12433566/sysroot/usr/include:$CPLUS_INCLUDE_PATH
+```
+- ANDROID_NDK_ROOT 및 NDK_ROOT: NDK와 관련된 설정을 명시적으로 해주기.
+```
+export ANDROID_NDK_ROOT=/home/southglory/android_sdk/ndk/28.0.12433566
+export NDK_ROOT=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64
+```
+- PATH 환경 변수에 NDK와 관련된 바이너리 경로 추가: NDK의 clang 및 clang++을 명령어로 쉽게 사용할 수 있도록 PATH에 추가.
+```
+export PATH=$NDK_ROOT/bin:$PATH
+```
+
+6. 빌드하기
 ```
 python setup_for_android.py build_ext --inplace
 ```
