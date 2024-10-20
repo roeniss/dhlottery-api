@@ -3,6 +3,17 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
+        "extra_compile_args": [
+            "--target=aarch64-linux-android",
+            "--sysroot=/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+        ],
+        "extra_link_args": [
+            "--target=aarch64-linux-android",
+            "--sysroot=/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot",
+            "-L/home/southglory/android_sdk/ndk/28.0.12433566/platforms/android-21/arch-arm64/usr/lib",
+            "-lc",
+            "-lgcc"
+        ],
         "name": "dhapi.main",
         "sources": [
             "src/dhapi/main.py"
@@ -1479,7 +1490,7 @@ static const char *__pyx_filename;
 /* #### Code section: filename_table ### */
 
 static const char *__pyx_f[] = {
-  "src\\\\dhapi\\\\main.py",
+  "src/dhapi/main.py",
 };
 /* #### Code section: utility_code_proto_before_types ### */
 /* ForceInitThreads.proto */
@@ -2080,7 +2091,7 @@ static const char __pyx_k_entrypoint[] = "entrypoint";
 static const char __pyx_k_initializing[] = "_initializing";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
 static const char __pyx_k_show_balance[] = "show-balance";
-static const char __pyx_k_src_dhapi_main_py[] = "src\\dhapi\\main.py";
+static const char __pyx_k_src_dhapi_main_py[] = "src/dhapi/main.py";
 static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_dhapi_router_router[] = "dhapi.router.router";

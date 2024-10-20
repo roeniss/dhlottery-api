@@ -1,20 +1,38 @@
 import os
 import pathlib
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
-from distutils.sysconfig import get_config_var, get_config_vars
+from distutils.sysconfig import get_config_vars
 
 HERE = pathlib.Path(__file__).parent.resolve()
 
 # Set NDK toolchain path
-os.environ["CC"] = "/path/to/ndk/toolchain/bin/clang"  # Update with your Android NDK Clang path
-os.environ["CXX"] = "/path/to/ndk/toolchain/bin/clang++"
+os.environ["CC"] = "/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+os.environ["CXX"] = "/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
 
 # Disable flags that are not compatible with NDK
 cfg_vars = get_config_vars()
 for key in ["CFLAGS", "OPT", "BASECFLAGS"]:
     if key in cfg_vars:
         cfg_vars[key] = cfg_vars[key].replace("-Wstrict-prototypes", "")
+
+# Extension module for Cython
+extensions = [
+    Extension(
+        "dhapi.main",
+        ["src/dhapi/main.py"],
+        extra_compile_args=[
+            "--target=aarch64-linux-android",
+            "--sysroot=/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+        ],
+        extra_link_args=[
+            "--target=aarch64-linux-android",
+            "--sysroot=/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot",
+            "-L/home/southglory/android_sdk/platforms/android-28/arch-arm64/usr/lib",  # Correct platform path
+            "-lc", "-lgcc",
+        ]
+    )
+]
 
 def _get_dependencies():
     with open(HERE / "requirements.txt") as f:
@@ -43,6 +61,12 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.8, <4",
-    ext_modules=cythonize("src/dhapi/main.py", language_level=3),
+    
+    # Specify custom build directory here
+    options={
+        'build': {'build_lib': './build/android'},  # Custom build directory
+    },
+    
+    ext_modules=cythonize(extensions, compiler_directives={'language_level': 3}),
     install_requires=_get_dependencies(),
 )

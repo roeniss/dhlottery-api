@@ -139,14 +139,21 @@ sdk manager 설치 확인
 ```
 ./sdkmanager --list
 ```
-3. ndk, cmake 설치
+3. ndk, cmake, platform, arm64-v8a 설치
 ```
 sdkmanager --install "ndk;28.0.12433566"
 sdkmanager --install "cmake;3.30.5"
+sdkmanager --install "platforms;android-28" "platforms;android-29" "platforms;android-30" "platforms;android-31" "platforms;android-32" "platforms;android-33" "platforms;android-34" "platforms;android-35"
+sdkmanager --install "system-images;android-28;default;arm64-v8a" "system-images;android-29;default;arm64-v8a" "system-images;android-30;default;arm64-v8a" "system-images;android-31;default;arm64-v8a" "system-images;android-32;default;arm64-v8a" "system-images;android-33;default;arm64-v8a" "system-images;android-34;default;arm64-v8a" "system-images;android-35;google_apis;arm64-v8a"
 ```
 ```
 sdkmanager --update
 ```
 ```
 sdkmanager --licenses
+```
+
+4. 빌드하기
+```
+python setup_for_android.py build_ext --inplace
 ```
