@@ -7,12 +7,12 @@ from distutils.sysconfig import get_config_vars
 HERE = pathlib.Path(__file__).parent.resolve()
 
 # Set paths for Android NDK and build tools
-NDK_ROOT = "/home/southglory/android_sdk/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64"
+NDK_ROOT = "/home/southglory/android_sdk/ndk/27.0.11718014/toolchains/llvm/prebuilt/linux-x86_64"
 SYSROOT = f"{NDK_ROOT}/sysroot"
 LIBGCC_PATH = "/usr/lib/gcc/x86_64-linux-gnu/13" 
 
 # List of API levels you want to build for
-api_levels = ["28"] ##, "29", "30", "31", "32", "33", "34", "35"]
+api_levels = ["35"] ##, "29", "30", "31", "32", "33", "34", "35"]
 
 # Set the compilers from NDK toolchain
 os.environ["CC"] = f"{NDK_ROOT}/bin/clang"
