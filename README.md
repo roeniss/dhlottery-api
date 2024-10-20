@@ -8,6 +8,7 @@ https://github.com/user-attachments/assets/0be65454-8025-4fff-aa29-f88bc5948b43
 
 ### 설치 밎 사용법
 
+
 ```sh
 # pip install dhapi --upgrade # pip 최신 버전을 권장합니다: pip install --upgrade pip
 pip install -e . # 현재 프로젝트 경로의 src를 심볼릭 링크로 그대로 사용하는 패키지 설치하기옴
@@ -78,4 +79,74 @@ pause
 
 ```
 build.bat
+```
+
+## 공유 라이브러리로 빌드하기
+### wsl 우분투
+
+0. 파이썬 환경 설치
+
+miniconda 설치 후 환경 설치,  
+cmake(pip, conda 모두) 설치,  
+build-essential 설치.  
+
+
+1. openjdk 설치
+
+```
+sudo apt update
+sudo apt install openjdk-17-jdk
+```
+```
+update-alternatives --config java
+```
+경로 등록.
+```
+nano ~/.bashrc
+```
+```
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+```
+source ~/.bashrc
+```
+jdk 설치 확인
+```
+java -version
+```
+
+
+2. android sdkmanager 설치
+
+```
+https://developer.android.com/tools/sdkmanager?hl=ko
+```
+를 따라서 폴더를 위치시킨 후, 등록.
+
+```
+nano ~/.bashrc
+```
+
+```
+export ANDROID_SDK_ROOT=$HOME/android_sdk
+export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+```
+```
+source ~/.bashrc
+```
+sdk manager 설치 확인
+```
+./sdkmanager --list
+```
+3. ndk, cmake 설치
+```
+sdkmanager --install "ndk;28.0.12433566"
+sdkmanager --install "cmake;3.30.5"
+```
+```
+sdkmanager --update
+```
+```
+sdkmanager --licenses
 ```
