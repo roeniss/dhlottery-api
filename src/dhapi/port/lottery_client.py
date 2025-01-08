@@ -23,8 +23,8 @@ class LotteryClient:
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
     _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
-    _assign_virtual_account_1 = "https://dhlottery.co.kr/nicePay.do?method=nicePayInit"
-    _assign_virtual_account_2 = "https://dhlottery.co.kr/nicePay.do?method=nicePayProcess"
+    _assign_virtual_account_1 = "https://dhlottery.co.kr/kbank.do?method=kbankInit"
+    _assign_virtual_account_2 = "https://dhlottery.co.kr/kbank.do?method=kbankProcess"
 
     def __init__(self, user_profile: User, lottery_endpoint):
         self._user_id = user_profile.username
