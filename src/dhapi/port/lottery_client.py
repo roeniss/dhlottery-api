@@ -205,7 +205,14 @@ class LotteryClient:
                 구매불가능금액 = self._parse_digit(elem.select("td.ta_right")[4].contents[0])  # (예약구매금액 + 출금신청중금액)
                 이번달누적구매금액 = self._parse_digit(elem.select("td.ta_right")[5].contents[0])
 
-            self._lottery_endpoint.print_result_of_show_balance(총예치금, 구매가능금액, 예약구매금액, 출금신청중금액, 구매불가능금액, 이번달누적구매금액)
+            self._lottery_endpoint.print_result_of_show_balance(
+                총예치금=총예치금,
+                구매가능금액=구매가능금액,
+                예약구매금액=예약구매금액,
+                출금신청중금액=출금신청중금액,
+                구매불가능금액=구매불가능금액,
+                이번달누적구매금액=이번달누적구매금액,
+            )
 
         except Exception:
             raise RuntimeError("❗ 예치금 현황을 조회하지 못했습니다.")
