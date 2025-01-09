@@ -23,8 +23,8 @@ class LotteryClient:
     _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
     _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
-    _assign_virtual_account_1 = "https://dhlottery.co.kr/nicePay.do?method=nicePayInit"
-    _assign_virtual_account_2 = "https://dhlottery.co.kr/nicePay.do?method=nicePayProcess"
+    _assign_virtual_account_1 = "https://dhlottery.co.kr/kbank.do?method=kbankInit"
+    _assign_virtual_account_2 = "https://dhlottery.co.kr/kbank.do?method=kbankProcess"
 
     def __init__(self, user_profile: User, lottery_endpoint):
         self._user_id = user_profile.username
@@ -205,7 +205,14 @@ class LotteryClient:
                 구매불가능금액 = self._parse_digit(elem.select("td.ta_right")[4].contents[0])  # (예약구매금액 + 출금신청중금액)
                 이번달누적구매금액 = self._parse_digit(elem.select("td.ta_right")[5].contents[0])
 
-            self._lottery_endpoint.print_result_of_show_balance(총예치금, 구매가능금액, 예약구매금액, 출금신청중금액, 구매불가능금액, 이번달누적구매금액)
+            self._lottery_endpoint.print_result_of_show_balance(
+                총예치금=총예치금,
+                구매가능금액=구매가능금액,
+                예약구매금액=예약구매금액,
+                출금신청중금액=출금신청중금액,
+                구매불가능금액=구매불가능금액,
+                이번달누적구매금액=이번달누적구매금액,
+            )
 
         except Exception:
             raise RuntimeError("❗ 예치금 현황을 조회하지 못했습니다.")

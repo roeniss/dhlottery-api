@@ -15,7 +15,7 @@ class LotteryStdoutPrinter:
 
         console.print(table)
 
-    def print_result_of_show_balance(self, 총예치금, 구매가능금액, 예약구매금액, 출금신청중금액, 구매불가능금액, 이번달누적구매금액):
+    def print_result_of_show_balance(self, *, 총예치금, 구매가능금액, 예약구매금액, 출금신청중금액, 구매불가능금액, 이번달누적구매금액):
         console = Console()
 
         console.print("✅ 예치금 현황을 조회했습니다.")
