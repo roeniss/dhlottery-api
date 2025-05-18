@@ -20,3 +20,4 @@ pytz==2024.1
 typer==0.9.0
 rich==13.7.0
 pytest-mock==3.12.0
+click==8.1.8
