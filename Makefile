@@ -13,9 +13,16 @@ clean:
 .PHONY : clean
 
 
-lintfmt:
+check:
 	black src --check --diff
 	pylint src --fail-under=10
+
+.PHONY : check
+
+
+lintfmt:
+	black src
+	pylint src
 
 .PHONY : lintfmt
 

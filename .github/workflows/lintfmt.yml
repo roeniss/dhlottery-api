@@ -1,11 +1,11 @@
-name: Execute Lint Formatting
+name: Check lint & format, Test
 
 on:
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  lintfmt:
+  lintFmtTest:
 
     runs-on: ubuntu-latest
 
@@ -24,7 +24,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Execute Lint Formatting
-      run: make lintfmt
+      run: make check
 
     - name: Run Tests
       run: make test
