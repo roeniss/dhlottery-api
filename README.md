@@ -58,10 +58,10 @@ uvx dhapi buy-lotto645 -y
 ```toml
 [default]
 username = "dhlotter_id"
-password = "dhlotter_pw"
+password = "****"
 [another_profile]
 username = "dhlotter_second_id"
-password = "dhlotter_second_pw"
+password = "****"
 ```
 
 이후 `-p` 플래그로 프로필을 골라 사용합니다.
