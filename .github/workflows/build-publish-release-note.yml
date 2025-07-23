@@ -27,6 +27,7 @@ jobs:
       id-token: write
 
     steps:
+      - uses: actions/checkout@v4
       - uses: pypa/gh-action-pypi-publish@release/v1
 
       - uses: release-drafter/release-drafter@v6
