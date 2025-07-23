@@ -40,7 +40,9 @@ dhapi에서는 본인 전용 계좌를 발급받는 것까지만 가능합니다
 """,
 )
 def assign_virtual_account(
-    amount: Annotated[int, typer.Argument(help="입금할 금액을 지정합니다 (5천원, 1만원, 2만원, 3만원, 5만원, 10만원, 20만원, 30만원, 50만원, 70만원, 100만원 중 하나)", metavar="amount")] = 50000,
+    amount: Annotated[
+        int, typer.Argument(help="입금할 금액을 지정합니다 (5천원, 1만원, 2만원, 3만원, 5만원, 10만원, 20만원, 30만원, 50만원, 70만원, 100만원 중 하나)", metavar="amount")
+    ] = 50000,
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
 ):

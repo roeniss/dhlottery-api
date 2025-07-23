@@ -7,14 +7,7 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
-      # set version
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: VERSION # only check out this file
-          sparse-checkout-cone-mode: false
-      - name: Get version
-        id: version
-        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
 
       # tag
       - name: Bump version and push tag
@@ -22,7 +15,6 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.version.outputs.version }}
 
   build-and-publish:
     needs: tag
