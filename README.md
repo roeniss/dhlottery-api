@@ -8,6 +8,8 @@ https://github.com/user-attachments/assets/0be65454-8025-4fff-aa29-f88bc5948b43
 
 ### 설치 밎 사용법
 
+Python 3.9 이상이 필요합니다.
+
 ```sh
 pip install dhapi --upgrade # pip 최신 버전을 권장합니다: pip install --upgrade pip
 # [uv](https://github.com/astral-sh/uv) 사용 시
