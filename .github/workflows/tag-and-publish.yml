@@ -1,4 +1,4 @@
-name: Build package and Publish to PyPI
+name: Build and Publish package, Write release note
 
 on:
   workflow_dispatch:
@@ -22,5 +22,11 @@ jobs:
       - name: Execute publishing
         run: make build
 
+  release-note:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
+      - uses: release-drafter/release-drafter@v6
+        with:
+          config-name: release-drafter.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
