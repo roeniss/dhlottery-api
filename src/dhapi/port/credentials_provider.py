@@ -1,5 +1,6 @@
 import logging
 import os
+import getpass
 
 import tomli
 import tomli_w
@@ -75,8 +76,7 @@ class CredentialsProvider:
         self._ensure_credentials_file()
         print("📝 사용자 ID를 입력하세요: ", end="")
         user_id = input().strip()
-        print("📝 사용자 비밀번호를 입력하세요: ", end="")
-        user_pw = input().strip()
+        user_pw = getpass.getpass("📝 사용자 비밀번호를 입력하세요: ")
 
         doc = {profile_name: {"username": user_id, "password": user_pw}}
 
