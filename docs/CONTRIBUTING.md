@@ -26,6 +26,8 @@ make lintfmt
 make test
 ```
 
+`make lintfmt` 명령은 `black`과 `pylint`를 검사 모드로 실행하여 형식이 맞지 않거나 pylint 점수가 10점 만점이 아닐 경우 종료 코드 1을 반환합니다.
+
 ### 배포
 
 이 작업은 메인테이너가 진행합니다.

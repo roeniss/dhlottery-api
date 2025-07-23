@@ -14,8 +14,8 @@ clean:
 
 
 lintfmt:
-	black src/**
-	pylint src
+	black src --check --diff
+	pylint src --fail-under=10
 
 .PHONY : lintfmt
 
