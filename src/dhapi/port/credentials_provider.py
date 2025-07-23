@@ -36,7 +36,7 @@ class CredentialsProvider:
             print(f"❌ {self._path} 파일을 찾을 수 없습니다. 파일을 생성하고 프로필을 추가하시겠습니까? [Y/n] ", end="")
             answer = input().strip().lower()
             if answer in ["y", "yes", ""]:
-                print("📝 입력된 프로필 이름을 사용하시겠습니까? [Y/n]", end="")
+                print(f"📝 입력된 프로필 이름을 사용하시겠습니까? ({profile_name}) [Y/n]", end="")
                 answer = input().strip().lower()
                 if answer in ["y", "yes", ""]:
                     self._add_credentials(profile_name)
