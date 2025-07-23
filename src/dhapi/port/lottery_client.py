@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import urllib.parse
 from typing import List, Dict
 
 import pytz
@@ -226,7 +227,7 @@ class LotteryClient:
                 self._assign_virtual_account_1,
                 headers=self._headers,
                 data={
-                    "PayMethod": "VBANKFVB01",
+                    "PayMethod": "VBANK",
                     "VbankBankCode": "089",  # 가상계좌 채번가능 케이뱅크 코드
                     "price": str(deposit.amount),
                     "goodsName": "복권예치금",
@@ -240,9 +241,9 @@ class LotteryClient:
             logger.debug(f"data: {data}")
 
             body = {
-                "PayMethod": data["PayMethod"],
+                "PayMethod": "VBANK",
                 "GoodsName": data["GoodsName"],
-                "GoodsCnt": data["GoodsCnt"],
+                "GoodsCnt": '',
                 "BuyerTel": data["BuyerTel"],
                 "Moid": data["Moid"],
                 "MID": data["MID"],
@@ -251,9 +252,9 @@ class LotteryClient:
                 "MallUserID": data["MallUserID"],
                 "VbankExpDate": data["VbankExpDate"],
                 "BuyerEmail": data["BuyerEmail"],
-                "SocketYN": data["SocketYN"],
-                "GoodsCl": data["GoodsCl"],
-                "EncodeParameters": data["EncodeParameters"],
+                # "SocketYN": '',
+                # "GoodsCl": '',
+                # "EncodeParameters": '',
                 "EdiDate": data["EdiDate"],
                 "EncryptData": data["EncryptData"],
                 "Amt": data["amt"],
@@ -265,12 +266,13 @@ class LotteryClient:
                 "svcInfoPgMsgYn": "N",
                 "OptionList": "no_receipt",
                 "TransType": "0",  # 일반(0), 에스크로(1)
-                "TrKey": None,
+                # "TrKey": None,
             }
             logger.debug(f"body: {body}")
 
             resp = requests.post(self._assign_virtual_account_2, headers=self._headers, data=body, timeout=10)
             logger.debug(f"resp: {resp}")
+            logger.debug(f"resp.text: {resp.text}")
 
             soup = BeautifulSoup(resp.text, "html5lib")
 
