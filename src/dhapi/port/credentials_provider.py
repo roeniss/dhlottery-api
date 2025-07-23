@@ -1,6 +1,7 @@
 import logging
 import os
 import getpass
+from typing import Union
 
 import tomli
 import tomli_w
@@ -94,7 +95,7 @@ class CredentialsProvider:
             f.close()
 
     @staticmethod
-    def list_profiles(path: str | None = None):
+    def list_profiles(path: Union[str, None] = None):
         """Return available profile names."""
         _path = os.path.expanduser(path or "~/.dhapi/credentials")
         if not os.path.exists(_path):
