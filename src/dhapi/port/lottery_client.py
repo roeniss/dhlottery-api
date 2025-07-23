@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import urllib.parse
 from typing import List, Dict
 
 import pytz
@@ -243,7 +242,7 @@ class LotteryClient:
             body = {
                 "PayMethod": "VBANK",
                 "GoodsName": data["GoodsName"],
-                "GoodsCnt": '',
+                "GoodsCnt": "",
                 "BuyerTel": data["BuyerTel"],
                 "Moid": data["Moid"],
                 "MID": data["MID"],
