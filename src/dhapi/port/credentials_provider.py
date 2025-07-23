@@ -92,3 +92,15 @@ class CredentialsProvider:
         with open(self._path, "wb") as f:
             tomli_w.dump(config, f)
             f.close()
+
+    @staticmethod
+    def list_profiles(path: str | None = None):
+        """Return available profile names."""
+        _path = os.path.expanduser(path or "~/.dhapi/credentials")
+        if not os.path.exists(_path):
+            raise FileNotFoundError(f"{_path} 파일을 찾을 수 없습니다.")
+
+        with open(_path, "r", encoding="UTF-8") as f:
+            config = tomli.loads(f.read())
+
+        return list(config.keys())

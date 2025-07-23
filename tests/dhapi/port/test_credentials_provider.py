@@ -31,3 +31,26 @@ def test_error_when_user_declines_creation(tmp_path, monkeypatch, mocker):
 
     with pytest.raises(FileNotFoundError):
         CredentialsProvider("default")
+
+def test_list_profiles_returns_all_names(tmp_path):
+    data = """\
+[default]
+username = 'a'
+password = 'b'
+
+[second]
+username = 'c'
+password = 'd'
+"""
+    cred_file = tmp_path / "credentials"
+    cred_file.write_text(data, encoding="UTF-8")
+
+    profiles = CredentialsProvider.list_profiles(path=str(cred_file))
+
+    assert set(profiles) == {"default", "second"}
+
+
+def test_list_profiles_raise_when_file_missing(tmp_path):
+    missing = tmp_path / "none"
+    with pytest.raises(FileNotFoundError):
+        CredentialsProvider.list_profiles(path=str(missing))
