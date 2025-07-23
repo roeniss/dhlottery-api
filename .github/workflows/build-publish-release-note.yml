@@ -20,6 +20,7 @@ jobs:
           pip install -r requirements.txt
       - name: Execute publishing
         run: make build
+      - uses: pypa/gh-action-pypi-publish@release/v1
 
   release-note:
     runs-on: ubuntu-latest
@@ -28,7 +29,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pypa/gh-action-pypi-publish@release/v1
 
       - uses: release-drafter/release-drafter@v6
         with:
