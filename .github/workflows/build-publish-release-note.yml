@@ -5,7 +5,6 @@ on:
 
 jobs:
   build-and-publish:
-    needs: tag
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -23,6 +22,11 @@ jobs:
         run: make build
 
   release-note:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
+    steps:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
       - uses: release-drafter/release-drafter@v6
