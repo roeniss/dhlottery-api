@@ -13,7 +13,7 @@ def _get_dependencies():
 setup(
     name="dhapi",
     description="동행복권 비공식 API",
-    version=(HERE / "VERSION").read_text(encoding="utf-8"),
+    use_scm_version=True,
 
     long_description=(HERE / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",

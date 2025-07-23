@@ -31,9 +31,8 @@ make test
 
 이 작업은 메인테이너가 진행합니다.
 
-1. main 브랜치에서 [VERSION](./VERSION) 을 수정한 후 master 브랜치로 PR 생성합니다.
-2. CI가 통과되고 머지되면 [tag-and-publish 워크플로우](https://github.com/roeniss/dhlottery-api/actions/workflows/tag-and-publish.yml) 를 직접 수행합니다. 이렇게 하면 tag 생성이 진행되고 바로 이어서 Pypi 에 새 버전 배포가 진행됩니다.
-3. 생성된 tag로 GitHub Release 를 생성합니다.
+1. main 브랜치의 최신 커밋에 태그를 추가합니다 (e.g., `git tag "v4.0.8"`)
+2. publish workflow 를 실행합니다.
 
 ### 참고자료
 

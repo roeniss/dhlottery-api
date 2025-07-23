@@ -1,29 +1,9 @@
-name: Add verion tag and Publish to PyPI
+name: Build and Publish package, Write release note
 
 on:
   workflow_dispatch:
 
 jobs:
-  tag:
-    runs-on: ubuntu-latest
-    steps:
-      # set version
-      - uses: actions/checkout@v4
-        with:
-          sparse-checkout: VERSION # only check out this file
-          sparse-checkout-cone-mode: false
-      - name: Get version
-        id: version
-        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
-
-      # tag
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.version.outputs.version }}
-
   build-and-publish:
     needs: tag
     runs-on: ubuntu-latest
@@ -31,7 +11,6 @@ jobs:
       id-token: write
 
     steps:
-      # build
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -40,15 +19,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      # build
       - name: Execute publishing
         run: make build
 
-      # publish
+  release-note:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
-      # update release draft
       - uses: release-drafter/release-drafter@v6
         with:
           config-name: release-drafter.yml
