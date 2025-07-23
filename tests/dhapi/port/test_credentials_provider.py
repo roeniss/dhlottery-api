@@ -1,6 +1,7 @@
 import os
 import tomli
 import pytest
+
 from dhapi.port.credentials_provider import CredentialsProvider
 
 
@@ -54,3 +55,28 @@ def test_list_profiles_raise_when_file_missing(tmp_path):
     missing = tmp_path / "none"
     with pytest.raises(FileNotFoundError):
         CredentialsProvider.list_profiles(path=str(missing))
+
+
+def test_add_credentials_uses_getpass(tmp_path, monkeypatch):
+    cred_file = tmp_path / "credentials"
+    cred_file.write_text("", encoding="UTF-8")
+
+    provider = CredentialsProvider.__new__(CredentialsProvider)
+    provider._path = str(cred_file)
+
+    inputs = iter(["user"])
+    monkeypatch.setattr("builtins.input", lambda: next(inputs))
+
+    prompts = []
+
+    def fake_getpass(prompt):
+        prompts.append(prompt)
+        return "secret"
+
+    monkeypatch.setattr("getpass.getpass", fake_getpass)
+
+    provider._add_credentials("default")
+
+    saved = tomli.loads(cred_file.read_text())
+    assert saved == {"default": {"username": "user", "password": "secret"}}
+    assert prompts == ["📝 사용자 비밀번호를 입력하세요: "]
