@@ -1,7 +1,9 @@
 name: Add verion tag and Publish to PyPI
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
 
 jobs:
   tag:
@@ -9,12 +11,11 @@ jobs:
     steps:
       # set version
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: VERSION # only check out this file
-          sparse-checkout-cone-mode: false
-      - name: Get version
+      - name: Get version from setuptools_scm
         id: version
-        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+        run: |
+          python -m pip install setuptools_scm
+          echo "version=$(python -c 'import setuptools_scm; print(setuptools_scm.get_version())')" >> $GITHUB_OUTPUT
 
       # tag
       - name: Bump version and push tag
