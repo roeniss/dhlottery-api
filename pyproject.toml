@@ -1,3 +1,6 @@
 [tool.black]
 line-length = 180
 include = '\.pyi?$'
+
+[tool.setuptools_scm]
+write_to = "src/dhapi/_version.py"
