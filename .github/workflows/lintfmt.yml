@@ -25,3 +25,6 @@ jobs:
 
     - name: Execute Lint Formatting
       run: make lintfmt
+
+    - name: Run Tests
+      run: make test
