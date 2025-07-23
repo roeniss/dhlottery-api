@@ -9,3 +9,4 @@ dist/
 *.spec
 *~
 .idea/
+.coverage
