@@ -10,9 +10,19 @@ https://github.com/user-attachments/assets/0be65454-8025-4fff-aa29-f88bc5948b43
 
 ```sh
 pip install dhapi --upgrade # pip 최신 버전을 권장합니다: pip install --upgrade pip
-dhapi --help # 기본 도움말 보기 
+# [uv](https://github.com/astral-sh/uv) 사용 시
+uv pip install dhapi --upgrade
+dhapi --help # 기본 도움말 보기
 dhapi buy-lotto645 --help # '로또6/45' 구매 명령어의 도움말 보기
 dhapi buy-lotto645 -y # '로또6/45' 자동모드로 5장 구매 & 확인절차 스킵
+```
+
+### 설치 없이 사용하기
+
+```sh
+uvx dhapi --help
+uvx dhapi buy-lotto645 --help
+uvx dhapi buy-lotto645 -y
 ```
 
 ## 구현된 기능들
