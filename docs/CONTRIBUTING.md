@@ -23,6 +23,7 @@ PYTHONPATH=./src/ python3 src/dhapi/main.py buy_lotto645 -q
 
 ```sh
 make lintfmt
+make test
 ```
 
 ### 배포
