@@ -21,6 +21,6 @@ lintfmt:
 
 
 test:
-	TODO
+	PYTHONPATH=src pytest -q
 
 .PHONY : test
