@@ -49,7 +49,7 @@ class LotteryStdoutPrinter:
             table.add_row(slot["slot"], slot["mode"], *slot["numbers"])
         console.print(table)
 
-    def print_result_of_show_buy_list(self, data: List[Dict], json_output: bool = False):
+    def print_result_of_show_buy_list(self, data: List[Dict], json_output: bool = False, start_date: str = None, end_date: str = None):
         console = Console()
 
         if json_output:
@@ -57,7 +57,10 @@ class LotteryStdoutPrinter:
             print(json.dumps(json_results, ensure_ascii=False, indent=2))
             return
 
-        console.print("✅ 구매 내역을 조회했습니다. (최근 14일)")
+        if start_date and end_date:
+            console.print(f"✅ 구매 내역을 조회했습니다. ({start_date} ~ {end_date})")
+        else:
+            console.print("✅ 구매 내역을 조회했습니다.")
 
         if not data:
             console.print("구매 내역이 없습니다.")

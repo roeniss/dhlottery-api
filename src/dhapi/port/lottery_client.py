@@ -219,19 +219,28 @@ class LotteryClient:
         except Exception:
             raise RuntimeError("❗ 예치금 현황을 조회하지 못했습니다.")
 
-    def show_buy_list(self, json_output=False):
+    def show_buy_list(self, json_output=False, start_date=None, end_date=None):
         try:
             today = datetime.date.today()
-            two_weeks_ago = today - datetime.timedelta(days=14)
+            
+            if start_date:
+                start_dt = datetime.datetime.strptime(start_date, "%Y%m%d").date()
+            else:
+                start_dt = today - datetime.timedelta(days=14)
+
+            if end_date:
+                end_dt = datetime.datetime.strptime(end_date, "%Y%m%d").date()
+            else:
+                end_dt = today
 
             data = {
                 "nowPage": 1,
-                "searchStartDate": two_weeks_ago.strftime("%Y%m%d"),
-                "searchEndDate": today.strftime("%Y%m%d"),
+                "searchStartDate": start_dt.strftime("%Y%m%d"),
+                "searchEndDate": end_dt.strftime("%Y%m%d"),
                 "lottoId": "",
                 "winGrade": 2,
-                "calendarStartDt": two_weeks_ago.strftime("%Y-%m-%d"),
-                "calendarEndDt": today.strftime("%Y-%m-%d"),
+                "calendarStartDt": start_dt.strftime("%Y-%m-%d"),
+                "calendarEndDt": end_dt.strftime("%Y-%m-%d"),
                 "sortOrder": "DESC",
             }
 
@@ -263,7 +272,7 @@ class LotteryClient:
                 if rows:
                     found_data.append({"headers": headers, "rows": rows})
 
-            self._lottery_endpoint.print_result_of_show_buy_list(found_data, json_output)
+            self._lottery_endpoint.print_result_of_show_buy_list(found_data, json_output, start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d"))
 
         except Exception as e:
             logger.error(e)

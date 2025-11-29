@@ -76,11 +76,13 @@ def show_balance(
 def show_buy_list(
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     json_output: Annotated[bool, typer.Option("-j", "--json", help="JSON 형식으로 출력합니다.")] = False,
+    start_date: Annotated[Optional[str], typer.Option("-s", "--start-date", help="조회 시작 날짜 (YYYYMMDD)")] = None,
+    end_date: Annotated[Optional[str], typer.Option("-e", "--end-date", help="조회 종료 날짜 (YYYYMMDD)")] = None,
     _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
 ):
     user = CredentialsProvider(profile).get_user()
     client = build_lottery_client(user)
-    client.show_buy_list(json_output)
+    client.show_buy_list(json_output, start_date, end_date)
 
 
 @app.command(
