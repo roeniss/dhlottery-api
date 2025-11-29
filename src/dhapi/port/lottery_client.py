@@ -305,7 +305,7 @@ class LotteryClient:
                         continue
 
                     slot = spans[0].text.strip()
-                    mode = spans[1].text.strip()
+                    mode = " ".join(spans[1].text.split())
 
                     nums_div = li.find("div", {"class": "nums"})
                     if nums_div:
