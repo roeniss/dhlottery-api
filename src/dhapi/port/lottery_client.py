@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import re
 from typing import List, Dict
 
 import pytz
@@ -25,6 +26,7 @@ class LotteryClient:
     _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
     _assign_virtual_account_1 = "https://dhlottery.co.kr/kbank.do?method=kbankInit"
     _assign_virtual_account_2 = "https://dhlottery.co.kr/kbank.do?method=kbankProcess"
+    _lotto_buy_list_url = "https://www.dhlottery.co.kr/myPage.do?method=lottoBuyList"
 
     def __init__(self, user_profile: User, lottery_endpoint):
         self._user_id = user_profile.username
@@ -216,6 +218,118 @@ class LotteryClient:
 
         except Exception:
             raise RuntimeError("❗ 예치금 현황을 조회하지 못했습니다.")
+
+    def show_buy_list(self, json_output=False):
+        try:
+            today = datetime.date.today()
+            two_weeks_ago = today - datetime.timedelta(days=14)
+
+            data = {
+                "nowPage": 1,
+                "searchStartDate": two_weeks_ago.strftime("%Y%m%d"),
+                "searchEndDate": today.strftime("%Y%m%d"),
+                "lottoId": "",
+                "winGrade": 2,
+                "calendarStartDt": two_weeks_ago.strftime("%Y-%m-%d"),
+                "calendarEndDt": today.strftime("%Y-%m-%d"),
+                "sortOrder": "DESC",
+            }
+
+            resp = requests.post(self._lotto_buy_list_url, headers=self._headers, data=data, timeout=10)
+            soup = BeautifulSoup(resp.text, "html5lib")
+
+            tables = soup.find_all("table")
+            found_data = []
+            for table in tables:
+                headers = [th.text.strip() for th in table.find_all("th")]
+                rows = []
+                for tr in table.find_all("tr"):
+                    cols = []
+                    detail_info = None
+                    tds = tr.find_all("td")
+                    for i, td in enumerate(tds):
+                        text = td.text.strip()
+                        cols.append(text)
+
+                        if i == 3:
+                            detail_info = self._extract_detail_info(td)
+
+                    if cols:
+                        if detail_info:
+                            numbers = self._get_lotto645_detail(detail_info)
+                            cols[3] = numbers
+                        rows.append(cols)
+
+                if rows:
+                    found_data.append({"headers": headers, "rows": rows})
+
+            self._lottery_endpoint.print_result_of_show_buy_list(found_data, json_output)
+
+        except Exception as e:
+            logger.error(e)
+            raise RuntimeError("❗ 구매 내역을 조회하지 못했습니다.")
+
+    def _extract_detail_info(self, td):
+        link = td.find("a")
+        if link and "javascript:detailPop" in link.get("href", ""):
+            href = link.get("href")
+            match = re.search(r"detailPop\('([^']*)',\s*'([^']*)',\s*'([^']*)'\)", href)
+            if match:
+                return {
+                    "orderNo": match.group(1),
+                    "barcode": match.group(2),
+                    "issueNo": match.group(3),
+                }
+        return None
+
+    def _get_lotto645_detail(self, detail_info):
+        try:
+            url = (
+                f"https://www.dhlottery.co.kr/myPage.do?method=lotto645Detail"
+                f"&orderNo={detail_info['orderNo']}"
+                f"&barcode={detail_info['barcode']}"
+                f"&issueNo={detail_info['issueNo']}"
+            )
+            resp = requests.get(url, headers=self._headers, timeout=10)
+            soup = BeautifulSoup(resp.text, "html5lib")
+
+            result = []
+            selected_div = soup.find("div", {"class": "selected"})
+            if selected_div:
+                for li in selected_div.find_all("li"):
+                    strong = li.find("strong")
+                    if not strong:
+                        continue
+                    spans = strong.find_all("span")
+                    if len(spans) < 2:
+                        continue
+
+                    slot = spans[0].text.strip()
+                    mode = spans[1].text.strip()
+
+                    nums_div = li.find("div", {"class": "nums"})
+                    if nums_div:
+                        numbers = self._extract_leaf_numbers(nums_div)
+                        if numbers:
+                            result.append(f"[{slot}] {mode}: {' '.join(numbers)}")
+
+            if result:
+                return "\n".join(result)
+
+            return "번호 확인 불가"
+
+        except Exception as e:
+            logger.error(f"로또 상세 정보 조회 실패: {e}")
+            return "조회 실패"
+
+    def _extract_leaf_numbers(self, nums_div):
+        numbers = []
+        for span in nums_div.find_all("span"):
+            if not span.find("span"):
+                text = span.text.strip()
+                if text.isdigit():
+                    numbers.append(text)
+        return numbers
 
     def _parse_digit(self, text):
         return int("".join(filter(str.isdigit, text)))
