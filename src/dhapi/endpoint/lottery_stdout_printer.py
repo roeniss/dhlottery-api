@@ -49,10 +49,10 @@ class LotteryStdoutPrinter:
             table.add_row(slot["slot"], slot["mode"], *slot["numbers"])
         console.print(table)
 
-    def print_result_of_show_buy_list(self, data: List[Dict], json_output: bool = False, start_date: str = None, end_date: str = None):
+    def print_result_of_show_buy_list(self, data: List[Dict], output_format: str = "table", start_date: str = None, end_date: str = None):
         console = Console()
 
-        if json_output:
+        if output_format == "json":
             json_results = self._build_json_results(data)
             print(json.dumps(json_results, ensure_ascii=False, indent=2))
             return

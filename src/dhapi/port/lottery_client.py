@@ -219,7 +219,7 @@ class LotteryClient:
         except Exception:
             raise RuntimeError("❗ 예치금 현황을 조회하지 못했습니다.")
 
-    def show_buy_list(self, json_output=False, start_date=None, end_date=None):
+    def show_buy_list(self, output_format="table", start_date=None, end_date=None):
         try:
             today = datetime.date.today()
 
@@ -272,7 +272,7 @@ class LotteryClient:
                 if rows:
                     found_data.append({"headers": headers, "rows": rows})
 
-            self._lottery_endpoint.print_result_of_show_buy_list(found_data, json_output, start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d"))
+            self._lottery_endpoint.print_result_of_show_buy_list(found_data, output_format, start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d"))
 
         except Exception as e:
             logger.error(e)
