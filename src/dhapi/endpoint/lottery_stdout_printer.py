@@ -92,19 +92,23 @@ class LotteryStdoutPrinter:
                 continue
 
             for row in rows:
-                item = {}
-                for i, header in enumerate(headers):
-                    if i < len(row):
-                        if header == "선택번호/복권번호":
-                            parsed_numbers = self._parse_lotto_numbers(row[i])
-                            if parsed_numbers:
-                                item["numbers"] = parsed_numbers
-                            else:
-                                item[header] = row[i]
-                        else:
-                            item[header] = row[i]
+                item = self._parse_row_for_json(row, headers)
                 json_results.append(item)
         return json_results
+
+    def _parse_row_for_json(self, row: List[str], headers: List[str]) -> Dict:
+        item = {}
+        for i, header in enumerate(headers):
+            if i < len(row):
+                if header == "선택번호/복권번호":
+                    parsed_numbers = self._parse_lotto_numbers(row[i])
+                    if parsed_numbers:
+                        item["numbers"] = parsed_numbers
+                    else:
+                        item[header] = row[i]
+                else:
+                    item[header] = row[i]
+        return item
 
     def _parse_lotto_numbers(self, value: str) -> List[Dict]:
         parsed_numbers = []

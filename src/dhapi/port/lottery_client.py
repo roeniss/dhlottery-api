@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import re
+import time
 from typing import List, Dict
 
 import pytz
@@ -221,17 +222,7 @@ class LotteryClient:
 
     def show_buy_list(self, output_format="table", start_date=None, end_date=None):
         try:
-            today = datetime.date.today()
-
-            if start_date:
-                start_dt = datetime.datetime.strptime(start_date, "%Y%m%d").date()
-            else:
-                start_dt = today - datetime.timedelta(days=14)
-
-            if end_date:
-                end_dt = datetime.datetime.strptime(end_date, "%Y%m%d").date()
-            else:
-                end_dt = today
+            start_dt, end_dt = self._calculate_date_range(start_date, end_date)
 
             data = {
                 "nowPage": 1,
@@ -248,36 +239,54 @@ class LotteryClient:
             soup = BeautifulSoup(resp.text, "html5lib")
 
             tables = soup.find_all("table")
-            found_data = []
-            for table in tables:
-                headers = [th.text.strip() for th in table.find_all("th")]
-                rows = []
-                for tr in table.find_all("tr"):
-                    cols = []
-                    detail_info = None
-                    tds = tr.find_all("td")
-                    for i, td in enumerate(tds):
-                        text = td.text.strip()
-                        cols.append(text)
-
-                        if i == 3:
-                            detail_info = self._extract_detail_info(td)
-
-                    if cols:
-                        if detail_info:
-                            numbers = self._get_lotto645_detail(detail_info)
-                            time.sleep(0.5) # 500ms sleep for dhlottery server
-                            cols[3] = numbers
-                        rows.append(cols)
-
-                if rows:
-                    found_data.append({"headers": headers, "rows": rows})
+            found_data = self._parse_buy_list_tables(tables)
 
             self._lottery_endpoint.print_result_of_show_buy_list(found_data, output_format, start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d"))
 
         except Exception as e:
             logger.error(e)
             raise RuntimeError("❗ 구매 내역을 조회하지 못했습니다.")
+
+    def _calculate_date_range(self, start_date, end_date):
+        today = datetime.date.today()
+
+        if start_date:
+            start_dt = datetime.datetime.strptime(start_date, "%Y%m%d").date()
+        else:
+            start_dt = today - datetime.timedelta(days=14)
+
+        if end_date:
+            end_dt = datetime.datetime.strptime(end_date, "%Y%m%d").date()
+        else:
+            end_dt = today
+        return start_dt, end_dt
+
+    def _parse_buy_list_tables(self, tables):
+        found_data = []
+        for table in tables:
+            headers = [th.text.strip() for th in table.find_all("th")]
+            rows = []
+            for tr in table.find_all("tr"):
+                cols = []
+                detail_info = None
+                tds = tr.find_all("td")
+                for i, td in enumerate(tds):
+                    text = td.text.strip()
+                    cols.append(text)
+
+                    if i == 3:
+                        detail_info = self._extract_detail_info(td)
+
+                if cols:
+                    if detail_info:
+                        numbers = self._get_lotto645_detail(detail_info)
+                        time.sleep(0.5)  # 500ms sleep for dhlottery server
+                        cols[3] = numbers
+                    rows.append(cols)
+
+            if rows:
+                found_data.append({"headers": headers, "rows": rows})
+        return found_data
 
     def _extract_detail_info(self, td):
         link = td.find("a")
