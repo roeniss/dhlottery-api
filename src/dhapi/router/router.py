@@ -72,7 +72,7 @@ def show_balance(
     help="""
 구매 내역을 조회합니다.
 
-기본적으로 최근 14일간의 내역을 조회하며, --start-date와 --end-date 옵션을 통해 조회 기간을 지정할 수 있습니다.
+기본적으로 최근 14일간의 내역을 조회하며, --start-date 및 --end-date 옵션을 통해 조회 기간을 지정할 수 있습니다.
 """
 )
 def show_buy_list(

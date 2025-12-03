@@ -122,11 +122,13 @@ class LotteryStdoutPrinter:
                 mode = match.group(2).strip()
                 nums_str = match.group(3).strip()
                 nums = [int(n) for n in nums_str.split()]
-                parsed_numbers.append({
-                    "slot": slot,
-                    "mode": mode,
-                    "numbers": nums,
-                })
+                parsed_numbers.append(
+                    {
+                        "slot": slot,
+                        "mode": mode,
+                        "numbers": nums,
+                    }
+                )
         return parsed_numbers
 
     def _pad_row(self, row: List[str], target_length: int) -> List[str]:

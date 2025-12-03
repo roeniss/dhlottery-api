@@ -222,7 +222,7 @@ class LotteryClient:
     def show_buy_list(self, json_output=False, start_date=None, end_date=None):
         try:
             today = datetime.date.today()
-            
+
             if start_date:
                 start_dt = datetime.datetime.strptime(start_date, "%Y%m%d").date()
             else:
