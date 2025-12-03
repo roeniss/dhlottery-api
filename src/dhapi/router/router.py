@@ -69,6 +69,25 @@ def show_balance(
 
 
 @app.command(
+    help="""
+구매 내역을 조회합니다.
+
+기본적으로 최근 14일간의 내역을 조회하며, --start-date 및 --end-date 옵션을 통해 조회 기간을 지정할 수 있습니다.
+"""
+)
+def show_buy_list(
+    profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
+    output_format: Annotated[str, typer.Option("-f", "--format", help="출력 형식을 지정합니다 (table, json).")] = "table",
+    start_date: Annotated[Optional[str], typer.Option("-s", "--start-date", help="조회 시작 날짜 (YYYYMMDD)")] = None,
+    end_date: Annotated[Optional[str], typer.Option("-e", "--end-date", help="조회 종료 날짜 (YYYYMMDD)")] = None,
+    _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
+):
+    user = CredentialsProvider(profile).get_user()
+    client = build_lottery_client(user)
+    client.show_buy_list(output_format, start_date, end_date)
+
+
+@app.command(
     help="""등록된 프로필 목록을 출력합니다.""",
 )
 def show_profiles():

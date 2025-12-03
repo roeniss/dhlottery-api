@@ -1,6 +1,8 @@
 import datetime
 import json
 import logging
+import re
+import time
 from typing import List, Dict
 
 import pytz
@@ -25,6 +27,7 @@ class LotteryClient:
     _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
     _assign_virtual_account_1 = "https://dhlottery.co.kr/kbank.do?method=kbankInit"
     _assign_virtual_account_2 = "https://dhlottery.co.kr/kbank.do?method=kbankProcess"
+    _lotto_buy_list_url = "https://www.dhlottery.co.kr/myPage.do?method=lottoBuyList"
 
     def __init__(self, user_profile: User, lottery_endpoint):
         self._user_id = user_profile.username
@@ -216,6 +219,136 @@ class LotteryClient:
 
         except Exception:
             raise RuntimeError("❗ 예치금 현황을 조회하지 못했습니다.")
+
+    def show_buy_list(self, output_format="table", start_date=None, end_date=None):
+        try:
+            start_dt, end_dt = self._calculate_date_range(start_date, end_date)
+
+            data = {
+                "nowPage": 1,
+                "searchStartDate": start_dt.strftime("%Y%m%d"),
+                "searchEndDate": end_dt.strftime("%Y%m%d"),
+                "lottoId": "",
+                "winGrade": 2,
+                "calendarStartDt": start_dt.strftime("%Y-%m-%d"),
+                "calendarEndDt": end_dt.strftime("%Y-%m-%d"),
+                "sortOrder": "DESC",
+            }
+
+            resp = requests.post(self._lotto_buy_list_url, headers=self._headers, data=data, timeout=10)
+            soup = BeautifulSoup(resp.text, "html5lib")
+
+            tables = soup.find_all("table")
+            found_data = self._parse_buy_list_tables(tables)
+
+            self._lottery_endpoint.print_result_of_show_buy_list(found_data, output_format, start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d"))
+
+        except Exception as e:
+            logger.error(e)
+            raise RuntimeError("❗ 구매 내역을 조회하지 못했습니다.")
+
+    def _calculate_date_range(self, start_date, end_date):
+        today = datetime.date.today()
+
+        if start_date:
+            start_dt = datetime.datetime.strptime(start_date, "%Y%m%d").date()
+        else:
+            start_dt = today - datetime.timedelta(days=14)
+
+        if end_date:
+            end_dt = datetime.datetime.strptime(end_date, "%Y%m%d").date()
+        else:
+            end_dt = today
+        return start_dt, end_dt
+
+    def _parse_buy_list_tables(self, tables):
+        found_data = []
+        for table in tables:
+            headers = [th.text.strip() for th in table.find_all("th")]
+            rows = []
+            for tr in table.find_all("tr"):
+                cols = []
+                detail_info = None
+                tds = tr.find_all("td")
+                for i, td in enumerate(tds):
+                    text = td.text.strip()
+                    cols.append(text)
+
+                    if i == 3:
+                        detail_info = self._extract_detail_info(td)
+
+                if cols:
+                    if detail_info:
+                        numbers = self._get_lotto645_detail(detail_info)
+                        time.sleep(0.5)  # 500ms sleep for dhlottery server
+                        cols[3] = numbers
+                    rows.append(cols)
+
+            if rows:
+                found_data.append({"headers": headers, "rows": rows})
+        return found_data
+
+    def _extract_detail_info(self, td):
+        link = td.find("a")
+        if link and "javascript:detailPop" in link.get("href", ""):
+            href = link.get("href")
+            match = re.search(r"detailPop\('([^']*)',\s*'([^']*)',\s*'([^']*)'\)", href)
+            if match:
+                return {
+                    "orderNo": match.group(1),
+                    "barcode": match.group(2),
+                    "issueNo": match.group(3),
+                }
+        return None
+
+    def _get_lotto645_detail(self, detail_info):
+        try:
+            url = (
+                f"https://www.dhlottery.co.kr/myPage.do?method=lotto645Detail"
+                f"&orderNo={detail_info['orderNo']}"
+                f"&barcode={detail_info['barcode']}"
+                f"&issueNo={detail_info['issueNo']}"
+            )
+            resp = requests.get(url, headers=self._headers, timeout=10)
+            soup = BeautifulSoup(resp.text, "html5lib")
+
+            result = []
+            selected_div = soup.find("div", {"class": "selected"})
+            if selected_div:
+                for li in selected_div.find_all("li"):
+                    strong = li.find("strong")
+                    if not strong:
+                        continue
+                    spans = strong.find_all("span")
+                    if len(spans) < 2:
+                        continue
+
+                    slot = spans[0].text.strip()
+                    mode = " ".join(spans[1].text.split())
+
+                    nums_div = li.find("div", {"class": "nums"})
+                    if nums_div:
+                        numbers = self._extract_leaf_numbers(nums_div)
+                        if numbers:
+                            result.append(f"[{slot}] {mode}: {' '.join(numbers)}")
+
+            if result:
+                return "\n".join(result)
+
+            return "번호 확인 불가"
+
+        except Exception as e:
+            logger.error(f"로또 상세 정보 조회 실패: {e}")
+            return "조회 실패"
+
+    def _extract_leaf_numbers(self, nums_div):
+        numbers = []
+        for span in nums_div.find_all("span"):
+            if not span.find("span"):
+                text = span.text.strip()
+                if text.isdigit():
+                    numbers.append(text)
+        return numbers
 
     def _parse_digit(self, text):
         return int("".join(filter(str.isdigit, text)))
