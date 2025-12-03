@@ -266,6 +266,7 @@ class LotteryClient:
                     if cols:
                         if detail_info:
                             numbers = self._get_lotto645_detail(detail_info)
+                            time.sleep(0.5) # 500ms sleep for dhlottery server
                             cols[3] = numbers
                         rows.append(cols)
 
