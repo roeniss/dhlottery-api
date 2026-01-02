@@ -8,6 +8,8 @@ from typing import List, Dict
 import pytz
 import requests
 from bs4 import BeautifulSoup
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5
 
 from dhapi.domain.deposit import Deposit
 from dhapi.domain.lotto645_ticket import Lotto645Ticket, Lotto645Mode
@@ -17,14 +19,14 @@ logger = logging.getLogger(__name__)
 
 
 class LotteryClient:
-    _default_session_url = "https://dhlottery.co.kr/gameResult.do?method=byWin&wiselog=H_C_1_1"
-    _system_under_check_url = "https://dhlottery.co.kr/index_check.html"
-    _main_url = "https://dhlottery.co.kr/common.do?method=main"
-    _login_request_url = "https://www.dhlottery.co.kr/userSsl.do?method=login"
+    _base_url = "https://dhlottery.co.kr"
+    _login_page = "/login"
+    _rsa_key_url = "/login/selectRsaModulus.do"
+    _login_url = "/login/securityLoginCheck.do"
     _buy_lotto645_url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do"
-    _round_info_url = "https://www.dhlottery.co.kr/common.do?method=main"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
-    _cash_balance = "https://dhlottery.co.kr/userSsl.do?method=myPage"
+    _game645_page = "https://ol.dhlottery.co.kr/olotto/game/game645.do"
+    _cash_balance = "https://dhlottery.co.kr/mypage/home"
     _assign_virtual_account_1 = "https://dhlottery.co.kr/kbank.do?method=kbankInit"
     _assign_virtual_account_2 = "https://dhlottery.co.kr/kbank.do?method=kbankProcess"
     _lotto_buy_list_url = "https://www.dhlottery.co.kr/myPage.do?method=lottoBuyList"
@@ -33,98 +35,144 @@ class LotteryClient:
         self._user_id = user_profile.username
         self._user_pw = user_profile.password
         self._lottery_endpoint = lottery_endpoint
-        self._headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
-            "Connection": "keep-alive",
-            "Cache-Control": "max-age=0",
-            "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-            "sec-ch-ua-mobile": "?0",
-            "Upgrade-Insecure-Requests": "1",
-            "Origin": "https://dhlottery.co.kr",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-            "Referer": "https://dhlottery.co.kr",
-            "Sec-Fetch-Site": "same-site",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-User": "?1",
-            "Sec-Fetch-Dest": "document",
-            "Accept-Language": "ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7",
-            "X-Requested-With": "XMLHttpRequest",
-        }
-        self._set_default_session()
+
+        # requests.Session 사용 (자동 쿠키 관리)
+        self._session = requests.Session()
+        self._session.headers.update(
+            {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Connection": "keep-alive",
+            }
+        )
+
         self._login()
 
-    # 로그인을 시도하면 새로운 JSESSIONID 값이 내려오는데,
-    #  이 값으로 갱신하면 로그인이 풀리는 듯하여 헤더를 갱신하지 않음
-    def _set_default_session(self):
-        resp = requests.get(LotteryClient._default_session_url, timeout=10)
-        logger.debug(f"resp.status_code: {resp.status_code}")
-        logger.debug(f"resp.headers: {resp.headers}")
-
-        if resp.url == LotteryClient._system_under_check_url:
-            raise RuntimeError("동행복권 사이트가 현재 시스템 점검중입니다.")
-
-        for cookie in resp.cookies:
-            if cookie.name == "JSESSIONID":
-                self._headers["Cookie"] = f"JSESSIONID={cookie.value}"
-                break
-        else:
-            raise RuntimeError("JSESSIONID 쿠키가 정상적으로 세팅되지 않았습니다.")
+    def _rsa_encrypt(self, plain_text, modulus_hex, exponent_hex):
+        n = int(modulus_hex, 16)
+        e = int(exponent_hex, 16)
+        key = RSA.construct((n, e))
+        cipher = PKCS1_v1_5.new(key)
+        encrypted = cipher.encrypt(plain_text.encode("utf-8"))
+        return encrypted.hex()
 
     def _login(self):
-        resp = requests.post(
-            LotteryClient._login_request_url,
-            headers=self._headers,
-            data={
-                "returnUrl": LotteryClient._main_url,
-                "userId": self._user_id,
-                "password": self._user_pw,
-                "checkSave": "off",
-                "newsEventYn": "",
-            },
-            timeout=10,
-        )
-        soup = BeautifulSoup(resp.text, "html5lib")
-        if soup.find("a", {"class": "btn_common"}) is not None:
-            raise RuntimeError(
-                "로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요. (5회 실패했을 수도 있습니다. 이 경우엔 홈페이지에서 비밀번호를 변경해야 합니다)"
-            )  # TODO(roeniss): 명확히 구분해서 알려주기
+        resp = self._session.get(f"{self._base_url}/", timeout=10)
+        logger.debug(f"Initial session status: {resp.status_code}")
+
+        if "index_check.html" in resp.url:
+            raise RuntimeError("동행복권 사이트가 현재 시스템 점검중입니다.")
+
+        resp = self._session.get(f"{self._base_url}{self._login_page}", timeout=10)
+        logger.debug(f"Login page status: {resp.status_code}")
+
+        # RSA 공개키 요청
+        rsa_headers = {"Accept": "application/json", "X-Requested-With": "XMLHttpRequest", "Referer": f"{self._base_url}{self._login_page}"}
+        resp = self._session.get(f"{self._base_url}{self._rsa_key_url}", headers=rsa_headers, timeout=10)
+        rsa_data = resp.json()
+
+        if "data" not in rsa_data:
+            raise RuntimeError("RSA 키를 가져올 수 없습니다.")
+
+        rsa_modulus = rsa_data["data"]["rsaModulus"]
+        rsa_exponent = rsa_data["data"]["publicExponent"]
+        logger.debug(f"RSA key received, modulus length: {len(rsa_modulus)}")
+
+        # 아이디/비밀번호 암호화 및 로그인
+        encrypted_user_id = self._rsa_encrypt(self._user_id, rsa_modulus, rsa_exponent)
+        encrypted_password = self._rsa_encrypt(self._user_pw, rsa_modulus, rsa_exponent)
+
+        login_headers = {"Content-Type": "application/x-www-form-urlencoded", "Origin": self._base_url, "Referer": f"{self._base_url}{self._login_page}"}
+        login_data = {"userId": encrypted_user_id, "userPswdEncn": encrypted_password, "inpUserId": self._user_id}
+
+        resp = self._session.post(f"{self._base_url}{self._login_url}", headers=login_headers, data=login_data, timeout=10, allow_redirects=True)
+        logger.debug(f"Login response status: {resp.status_code}, URL: {resp.url}")
+
+        if resp.status_code != 200 or "loginSuccess" not in resp.url:
+            soup = BeautifulSoup(resp.text, "html5lib")
+            error_button = soup.find("a", {"class": "btn_common"})
+            if error_button:
+                raise RuntimeError("로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.")
+            raise RuntimeError(f"로그인에 실패했습니다. (Status: {resp.status_code}, URL: {resp.url})")
+
+        logger.info("로그인 성공")
+
+        # 구매 도메인(ol.dhlottery.co.kr)에 접속하여 JSESSIONID 획득
+        resp = self._session.get(f"{self._base_url}/main", timeout=10)
+        logger.debug(f"Main page status: {resp.status_code}")
+
+        resp = self._session.get(self._game645_page, timeout=10, allow_redirects=True)
+        logger.debug(f"ol.dhlottery.co.kr visit status: {resp.status_code}")
+
+        for cookie in self._session.cookies:
+            logger.debug(f"Cookie: {cookie.name} = {cookie.value[:20]}... (domain: {cookie.domain})")
+
+        if not any(c.name == "JSESSIONID" for c in self._session.cookies):
+            logger.warning("JSESSIONID was not acquired from ol.dhlottery.co.kr")
 
     def _get_round(self):
-        resp = requests.get(self._round_info_url, timeout=10)
-        soup = BeautifulSoup(resp.text, "html5lib")  # 'html5lib' : in case that the html don't have clean tag pairs
+        first_round_date = datetime.date(2002, 12, 7)
+        korea_tz = pytz.timezone("Asia/Seoul")
+        now = datetime.datetime.now(korea_tz)
+        today = now.date()
 
-        elem = soup.find("strong", {"id": "lottoDrwNo"})
-        if not elem:
-            raise RuntimeError("현재 회차 정보를 가져올 수 없습니다.")
+        current_weekday = today.weekday()
+        days_until_saturday = (5 - current_weekday) % 7
+        this_saturday = today + datetime.timedelta(days=days_until_saturday)
 
-        return int(elem.text) + 1
+        days_diff = (this_saturday - first_round_date).days
+        weeks_passed = days_diff // 7
+        round_number = 1 + weeks_passed
+
+        logger.debug(f"Calculated round: {round_number} (today: {today}, this_saturday: {this_saturday})")
+        return round_number
+
+    def _calculate_draw_dates(self):
+        korea_tz = pytz.timezone("Asia/Seoul")
+        now = datetime.datetime.now(korea_tz)
+        today = now.date()
+        current_weekday = today.weekday()
+        days_until_saturday = (5 - current_weekday) % 7
+        draw_date = today + datetime.timedelta(days=days_until_saturday)
+        pay_limit_date = draw_date + datetime.timedelta(days=365)
+        return draw_date, pay_limit_date
 
     def buy_lotto645(self, tickets: List[Lotto645Ticket]):
         try:
-            res = requests.post(url=self._ready_socket, headers=self._headers, timeout=5)
+            logger.debug(f"Calling ready_socket: {self._ready_socket}")
+            logger.debug(f"Session cookies: {dict(self._session.cookies)}")
+            res = self._session.post(url=self._ready_socket, timeout=5)
+            logger.debug(f"Ready socket status: {res.status_code}")
+            logger.debug(f"Ready socket response: {res.text}")
             direct = json.loads(res.text)["ready_ip"]
-
             logger.debug(f"direct: {direct}")
 
+            round_number = self._get_round()
+            draw_date, pay_limit_date = self._calculate_draw_dates()
+
             data = {
-                "round": str(self._get_round()),
+                "round": str(round_number),
                 "direct": direct,
                 "nBuyAmount": str(1000 * len(tickets)),
                 "param": self._make_buy_loyyo645_param(tickets),
+                "ROUND_DRAW_DATE": draw_date.strftime("%Y/%m/%d"),
+                "WAMT_PAY_TLMT_END_DT": pay_limit_date.strftime("%Y/%m/%d"),
                 "gameCnt": len(tickets),
+                "saleMdaDcd": "10",
             }
             logger.debug(f"data: {data}")
 
-            resp = requests.post(
-                self._buy_lotto645_url,
-                headers=self._headers,
-                data=data,
-                timeout=10,
-            )
+            buy_headers = {"Referer": self._game645_page, "Origin": "https://ol.dhlottery.co.kr"}
 
+            resp = self._session.post(self._buy_lotto645_url, headers=buy_headers, data=data, timeout=10)
+
+            logger.debug(f"Purchase response status: {resp.status_code}")
+            logger.debug(f"Purchase response headers: {resp.headers}")
+            logger.debug(f"Purchase response URL: {resp.url}")
             response_text = resp.text
-            logger.debug(f"response: {response_text}")
+            logger.debug(f"Purchase response text (first 500 chars): {response_text[:500]}")
+            logger.debug(f"Purchase response text (full): {response_text}")
 
             response = json.loads(response_text)
             if not self._is_purchase_success(response):
@@ -184,7 +232,7 @@ class LotteryClient:
 
     def show_balance(self):
         try:
-            resp = requests.get(self._cash_balance, headers=self._headers, timeout=10)
+            resp = self._session.get(self._cash_balance, timeout=10)
             soup = BeautifulSoup(resp.text, "html5lib")
 
             has_bank_account = soup.select_one(".tbl_total_account_number_top tbody tr td").contents != []
@@ -235,7 +283,7 @@ class LotteryClient:
                 "sortOrder": "DESC",
             }
 
-            resp = requests.post(self._lotto_buy_list_url, headers=self._headers, data=data, timeout=10)
+            resp = self._session.post(self._lotto_buy_list_url, data=data, timeout=10)
             soup = BeautifulSoup(resp.text, "html5lib")
 
             tables = soup.find_all("table")
@@ -309,7 +357,7 @@ class LotteryClient:
                 f"&barcode={detail_info['barcode']}"
                 f"&issueNo={detail_info['issueNo']}"
             )
-            resp = requests.get(url, headers=self._headers, timeout=10)
+            resp = self._session.get(url, timeout=10)
             soup = BeautifulSoup(resp.text, "html5lib")
 
             result = []
@@ -355,9 +403,8 @@ class LotteryClient:
 
     def assign_virtual_account(self, deposit: Deposit):
         try:
-            resp = requests.post(
+            resp = self._session.post(
                 self._assign_virtual_account_1,
-                headers=self._headers,
                 data={
                     "PayMethod": "VBANK",
                     "VbankBankCode": "089",  # 가상계좌 채번가능 케이뱅크 코드
@@ -402,7 +449,7 @@ class LotteryClient:
             }
             logger.debug(f"body: {body}")
 
-            resp = requests.post(self._assign_virtual_account_2, headers=self._headers, data=body, timeout=10)
+            resp = self._session.post(self._assign_virtual_account_2, data=body, timeout=10)
             logger.debug(f"resp: {resp}")
             logger.debug(f"resp.text: {resp.text}")
 
