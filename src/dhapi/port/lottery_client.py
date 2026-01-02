@@ -40,9 +40,18 @@ class LotteryClient:
         self._session.headers.update(
             {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                 "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
                 "Connection": "keep-alive",
+                "Cache-Control": "max-age=0",
+                "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"macOS"',
+                "Upgrade-Insecure-Requests": "1",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-User": "?1",
+                "Sec-Fetch-Dest": "document",
             }
         )
 
@@ -111,6 +120,15 @@ class LotteryClient:
             logger.warning("JSESSIONID was not acquired from ol.dhlottery.co.kr")
 
     def _get_round(self):
+        """
+        로또645 현재 판매 중인 회차를 계산
+
+        로또645는 2002년 12월 7일(토요일)부터 매주 토요일마다 추첨.
+        1회부터 현재까지 경과한 주 수를 계산하여 회차를 반환.
+
+        Returns:
+            int: 현재 판매 중인 회차 번호
+        """
         first_round_date = datetime.date(2002, 12, 7)
         korea_tz = pytz.timezone("Asia/Seoul")
         now = datetime.datetime.now(korea_tz)
@@ -139,13 +157,8 @@ class LotteryClient:
 
     def buy_lotto645(self, tickets: List[Lotto645Ticket]):
         try:
-            logger.debug(f"Calling ready_socket: {self._ready_socket}")
-            logger.debug(f"Session cookies: {dict(self._session.cookies)}")
             res = self._session.post(url=self._ready_socket, timeout=5)
-            logger.debug(f"Ready socket status: {res.status_code}")
-            logger.debug(f"Ready socket response: {res.text}")
             direct = json.loads(res.text)["ready_ip"]
-            logger.debug(f"direct: {direct}")
 
             round_number = self._get_round()
             draw_date, pay_limit_date = self._calculate_draw_dates()
