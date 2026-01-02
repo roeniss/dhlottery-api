@@ -36,7 +36,6 @@ class LotteryClient:
         self._user_pw = user_profile.password
         self._lottery_endpoint = lottery_endpoint
 
-        # requests.Session 사용 (자동 쿠키 관리)
         self._session = requests.Session()
         self._session.headers.update(
             {
@@ -167,12 +166,8 @@ class LotteryClient:
 
             resp = self._session.post(self._buy_lotto645_url, headers=buy_headers, data=data, timeout=10)
 
-            logger.debug(f"Purchase response status: {resp.status_code}")
-            logger.debug(f"Purchase response headers: {resp.headers}")
-            logger.debug(f"Purchase response URL: {resp.url}")
             response_text = resp.text
-            logger.debug(f"Purchase response text (first 500 chars): {response_text[:500]}")
-            logger.debug(f"Purchase response text (full): {response_text}")
+            logger.debug(f"response: {response_text}")
 
             response = json.loads(response_text)
             if not self._is_purchase_success(response):
