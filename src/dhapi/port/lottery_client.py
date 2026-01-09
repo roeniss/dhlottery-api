@@ -19,16 +19,16 @@ logger = logging.getLogger(__name__)
 
 
 class LotteryClient:
-    _base_url = "https://dhlottery.co.kr"
+    _base_url = "https://www.dhlottery.co.kr"
     _login_page = "/login"
     _rsa_key_url = "/login/selectRsaModulus.do"
     _login_url = "/login/securityLoginCheck.do"
     _buy_lotto645_url = "https://ol.dhlottery.co.kr/olotto/game/execBuy.do"
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
     _game645_page = "https://ol.dhlottery.co.kr/olotto/game/game645.do"
-    _cash_balance = "https://dhlottery.co.kr/mypage/home"
-    _assign_virtual_account_1 = "https://dhlottery.co.kr/kbank.do?method=kbankInit"
-    _assign_virtual_account_2 = "https://dhlottery.co.kr/kbank.do?method=kbankProcess"
+    _cash_balance = "https://www.dhlottery.co.kr/mypage/home"
+    _assign_virtual_account_1 = "https://www.dhlottery.co.kr/kbank.do?method=kbankInit"
+    _assign_virtual_account_2 = "https://www.dhlottery.co.kr/kbank.do?method=kbankProcess"
     _lotto_buy_list_url = "https://www.dhlottery.co.kr/myPage.do?method=lottoBuyList"
 
     def __init__(self, user_profile: User, lottery_endpoint):
