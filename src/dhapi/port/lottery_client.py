@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import re
 import time
 from typing import List, Dict
 
@@ -332,7 +331,7 @@ class LotteryClient:
             end_dt = today
         return start_dt, end_dt
 
-    def _parse_buy_list_json(self, response_data):
+    def _parse_buy_list_json(self, response_data):  # pylint: disable=too-many-locals
         if not response_data or "data" not in response_data:
             return []
 
@@ -358,20 +357,17 @@ class LotteryClient:
 
             win_amt_str = f"{win_amt:,}원" if win_amt > 0 else "-"
 
-            if gm_info and lottery_name in ["로또645", "로또6/45"] and ntsl_ordr_no:
+            if gm_info and lottery_name == "로또6/45" and ntsl_ordr_no:
                 numbers = self._get_lotto645_ticket_detail(ntsl_ordr_no, gm_info, purchase_date)
                 time.sleep(self._DETAIL_REQUEST_DELAY)
             else:
                 numbers = gm_info
 
-            if lottery_name in ["로또645", "로또6/45"]:
-                lottery_name = "로또6/45"
-
             rows.append([purchase_date, lottery_name, round_no, numbers, quantity, win_result, win_amt_str, draw_date])
 
         return [{"headers": headers, "rows": rows}]
 
-    def _get_lotto645_ticket_detail(self, ntsl_ordr_no, barcode, purchase_date):
+    def _get_lotto645_ticket_detail(self, ntsl_ordr_no, barcode, purchase_date):  # pylint: disable=too-many-locals
         """로또645 티켓 상세 정보 조회
 
         Args:
@@ -383,8 +379,6 @@ class LotteryClient:
             str: 포맷팅된 번호 정보
         """
         try:
-            import datetime
-
             purchase_dt = datetime.datetime.strptime(purchase_date, "%Y-%m-%d").date()
             start_date = (purchase_dt - datetime.timedelta(days=7)).strftime("%Y%m%d")
             end_date = (purchase_dt + datetime.timedelta(days=7)).strftime("%Y%m%d")
