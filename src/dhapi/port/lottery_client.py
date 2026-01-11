@@ -284,9 +284,6 @@ class LotteryClient:
             params = {
                 "srchStrDt": start_dt.strftime("%Y%m%d"),
                 "srchEndDt": end_dt.strftime("%Y%m%d"),
-                "sort": "",
-                "ltGdsCd": "",
-                "winResult": "",
                 "pageNum": 1,
                 "recordCountPerPage": 100,
                 "_": int(datetime.datetime.now().timestamp() * 1000),
