@@ -352,7 +352,7 @@ class LotteryClient:
             quantity = str(item.get("prchsQty", ""))
             win_result = item.get("ltWnResult", "")
             ntsl_ordr_no = item.get("ntslOrdrNo", "")
-            win_amt = item.get("ltWnAmt", 0)
+            win_amt = item.get("ltWnAmt", 0) or 0
             draw_date = item.get("epsdRflDt", "")
 
             win_amt_str = f"{win_amt:,}원" if win_amt > 0 else "-"
