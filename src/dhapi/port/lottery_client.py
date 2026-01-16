@@ -240,29 +240,25 @@ class LotteryClient:
 
     def show_balance(self):
         try:
-            resp = self._session.get(self._cash_balance, timeout=10)
-            soup = BeautifulSoup(resp.text, "html5lib")
+            # 예치금 정보 조회 (JSON API)
+            resp = self._session.get("https://www.dhlottery.co.kr/mypage/selectUserMndp.do", timeout=10)
+            if resp.status_code != 200 or "json" not in resp.headers.get("Content-Type", "").lower():
+                raise RuntimeError("예치금 API 응답 오류")
 
-            has_bank_account = soup.select_one(".tbl_total_account_number_top tbody tr td").contents != []
-            elem = soup.select("div.box.money")
-            elem = elem[0]
+            data = resp.json()
+            user_mndp = data.get("data", {}).get("userMndp", {})
 
-            if has_bank_account is True:
-                # 간편충전 계좌번호가 있는 경우
-                총예치금 = self._parse_digit(elem.select("p.total_new > strong")[0].contents[0])
-                구매가능금액 = self._parse_digit(elem.select("td.ta_right")[3].contents[0])
-                예약구매금액 = self._parse_digit(elem.select("td.ta_right")[4].contents[0])
-                출금신청중금액 = self._parse_digit(elem.select("td.ta_right")[5].contents[0])
-                구매불가능금액 = self._parse_digit(elem.select("td.ta_right")[6].contents[0])  # (예약구매금액 + 출금신청중금액)
-                이번달누적구매금액 = self._parse_digit(elem.select("td.ta_right")[7].contents[0])
-            else:
-                # 간편충전 계좌번호가 없는 경우
-                총예치금 = self._parse_digit(elem.select("p.total_new > strong")[0].contents[0])
-                구매가능금액 = self._parse_digit(elem.select("td.ta_right")[1].contents[0])
-                예약구매금액 = self._parse_digit(elem.select("td.ta_right")[2].contents[0])
-                출금신청중금액 = self._parse_digit(elem.select("td.ta_right")[3].contents[0])
-                구매불가능금액 = self._parse_digit(elem.select("td.ta_right")[4].contents[0])  # (예약구매금액 + 출금신청중금액)
-                이번달누적구매금액 = self._parse_digit(elem.select("td.ta_right")[5].contents[0])
+            총예치금 = user_mndp.get("totalAmt", 0)
+            구매가능금액 = user_mndp.get("crntEntrsAmt", 0)
+            예약구매금액 = user_mndp.get("rsvtOrdrAmt", 0)
+            출금신청중금액 = user_mndp.get("dawAplyAmt", 0)
+            구매불가능금액 = 예약구매금액 + 출금신청중금액
+
+            # 이번달 누적 구매금액 조회 (별도 API)
+            이번달누적구매금액 = 0
+            resp2 = self._session.get("https://www.dhlottery.co.kr/mypage/selectMyHomeInfo.do", timeout=10)
+            if resp2.status_code == 200 and "json" in resp2.headers.get("Content-Type", "").lower():
+                이번달누적구매금액 = resp2.json().get("data", {}).get("mnthPrchsAmt", 0)
 
             self._lottery_endpoint.print_result_of_show_balance(
                 총예치금=총예치금,
