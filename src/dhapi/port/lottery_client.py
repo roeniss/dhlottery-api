@@ -240,8 +240,14 @@ class LotteryClient:
 
     def show_balance(self):
         try:
+            headers = {
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "X-Requested-With": "XMLHttpRequest",
+                "Referer": self._cash_balance,
+            }
+
             # 예치금 정보 조회 (JSON API)
-            resp = self._session.get("https://www.dhlottery.co.kr/mypage/selectUserMndp.do", timeout=10)
+            resp = self._session.get("https://www.dhlottery.co.kr/mypage/selectUserMndp.do", headers=headers, timeout=10)
             if resp.status_code != 200 or "json" not in resp.headers.get("Content-Type", "").lower():
                 raise RuntimeError("예치금 API 응답 오류")
 
@@ -264,7 +270,7 @@ class LotteryClient:
 
             # 이번달 누적 구매금액 조회 (별도 API)
             이번달누적구매금액 = 0
-            resp2 = self._session.get("https://www.dhlottery.co.kr/mypage/selectMyHomeInfo.do", timeout=10)
+            resp2 = self._session.get("https://www.dhlottery.co.kr/mypage/selectMyHomeInfo.do", headers=headers, timeout=10)
             if resp2.status_code == 200 and "json" in resp2.headers.get("Content-Type", "").lower():
                 이번달누적구매금액 = resp2.json().get("data", {}).get("mnthPrchsAmt", 0)
 
