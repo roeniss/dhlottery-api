@@ -266,7 +266,7 @@ class LotteryClient:
             구매가능금액 = user_mndp.get("crntEntrsAmt", 0) or 0
             예약구매금액 = user_mndp.get("rsvtOrdrAmt", 0) or 0
             출금신청중금액 = user_mndp.get("dawAplyAmt", 0) or 0
-            구매불가능금액 = 예약구매금액 + 출금신청중금액
+            구매불가능금액 = 예약구매금액 + 출금신청중금액 + (user_mndp.get("feeAmt", 0) or 0)
 
             # 이번달 누적 구매금액 조회 (별도 API)
             이번달누적구매금액 = 0
