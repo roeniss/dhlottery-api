@@ -265,11 +265,11 @@ class LotteryClient:
             출금신청중금액 = user_mndp.get("dawAplyAmt", 0) or 0
             구매불가능금액 = 예약구매금액 + 출금신청중금액 + (user_mndp.get("feeAmt", 0) or 0)
 
-            # 이번달 누적 구매금액 조회 (별도 API)
-            이번달누적구매금액 = 0
+            # 최근 1달 누적 구매금액 조회
+            최근1달누적구매금액 = 0
             resp2 = self._session.get("https://www.dhlottery.co.kr/mypage/selectMyHomeInfo.do", headers=headers, timeout=10)
             if resp2.status_code == 200 and "json" in resp2.headers.get("Content-Type", "").lower():
-                이번달누적구매금액 = resp2.json().get("data", {}).get("mnthPrchsAmt", 0)
+                최근1달누적구매금액 = resp2.json().get("data", {}).get("mnthPrchsAmt", 0)
 
             self._lottery_endpoint.print_result_of_show_balance(
                 총예치금=총예치금,
@@ -277,7 +277,7 @@ class LotteryClient:
                 예약구매금액=예약구매금액,
                 출금신청중금액=출금신청중금액,
                 구매불가능금액=구매불가능금액,
-                이번달누적구매금액=이번달누적구매금액,
+                최근1달누적구매금액=최근1달누적구매금액,
             )
 
         except Exception:
