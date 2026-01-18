@@ -255,14 +255,11 @@ class LotteryClient:
             user_mndp = data.get("data", {}).get("userMndp", {})
 
             # 총예치금 계산 (웹사이트 JS 로직과 동일)
-            pnt_dpst_amt = user_mndp.get("pntDpstAmt", 0) or 0
-            pnt_tkmny_amt = user_mndp.get("pntTkmnyAmt", 0) or 0
-            ncsbl_dpst_amt = user_mndp.get("ncsblDpstAmt", 0) or 0
-            ncsbl_tkmny_amt = user_mndp.get("ncsblTkmnyAmt", 0) or 0
-            csbl_dpst_amt = user_mndp.get("csblDpstAmt", 0) or 0
-            csbl_tkmny_amt = user_mndp.get("csblTkmnyAmt", 0) or 0
-
-            총예치금 = (pnt_dpst_amt - pnt_tkmny_amt) + (ncsbl_dpst_amt - ncsbl_tkmny_amt) + (csbl_dpst_amt - csbl_tkmny_amt)
+            총예치금 = (
+                ((user_mndp.get("pntDpstAmt", 0) or 0) - (user_mndp.get("pntTkmnyAmt", 0) or 0))
+                + ((user_mndp.get("ncsblDpstAmt", 0) or 0) - (user_mndp.get("ncsblTkmnyAmt", 0) or 0))
+                + ((user_mndp.get("csblDpstAmt", 0) or 0) - (user_mndp.get("csblTkmnyAmt", 0) or 0))
+            )
             구매가능금액 = user_mndp.get("crntEntrsAmt", 0) or 0
             예약구매금액 = user_mndp.get("rsvtOrdrAmt", 0) or 0
             출금신청중금액 = user_mndp.get("dawAplyAmt", 0) or 0
