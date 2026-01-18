@@ -53,11 +53,9 @@ def assign_virtual_account(
     client.assign_virtual_account(deposit)
 
 
-@app.command(
-    help="""
+@app.command(help="""
 예치금 현황을 조회합니다.
-"""
-)
+""")
 def show_balance(
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     _debug: Annotated[bool, typer.Option("-d", "--debug", help="debug 로그를 활성화합니다.", callback=logger_callback)] = False,
@@ -68,13 +66,11 @@ def show_balance(
     client.show_balance()
 
 
-@app.command(
-    help="""
+@app.command(help="""
 구매 내역을 조회합니다.
 
 기본적으로 최근 14일간의 내역을 조회하며, --start-date 및 --end-date 옵션을 통해 조회 기간을 지정할 수 있습니다.
-"""
-)
+""")
 def show_buy_list(
     profile: Annotated[str, typer.Option("-p", "--profile", help="프로필을 지정합니다", metavar="")] = "default",
     output_format: Annotated[str, typer.Option("-f", "--format", help="출력 형식을 지정합니다 (table, json).")] = "table",
@@ -105,8 +101,7 @@ def show_profiles():
     console.print(table)
 
 
-@app.command(
-    help="""
+@app.command(help="""
 로또6/45 복권을 구매합니다.
 
 매주 최대 다섯 장까지 구매할 수 있습니다 (5 tickets).
@@ -124,8 +119,7 @@ dhapi buy-lotto645 '1,2,3' : 반자동모드 1장 (고정번호: 1,2,3)
 dhapi buy-lotto645 '1,2,3,4,5,6' '7,8,9' : 수동모드 1장 (고정번호: 1,2,3,4,5,6), 반자동모드 1장 (고정번호: 7,8,9)
 
 dhapi buy-lotto645 '' '' '' '1' : 자동모드 3장, 반자동모드 1장 (고정번호: 1)
-"""
-)
+""")
 def buy_lotto645(
     tickets: Annotated[List[str], typer.Argument(help="구매할 번호를 입력합니다. 생략 시 자동모드로 5장 구매합니다.", metavar="tickets", show_default=False)] = None,
     always_yes: Annotated[bool, typer.Option("-y", "--yes", help="구매 전 확인 절차를 스킵합니다.")] = False,
@@ -146,11 +140,9 @@ def buy_lotto645(
     client.buy_lotto645(tickets)
 
 
-@app.command(
-    help="""
+@app.command(help="""
 dhapi 버전을 출력합니다.
-"""
-)
+""")
 def version():
     version_callback(True)
 
