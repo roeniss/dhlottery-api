@@ -26,8 +26,8 @@ class LotteryClient:
     _ready_socket = "https://ol.dhlottery.co.kr/olotto/game/egovUserReadySocket.json"
     _game645_page = "https://ol.dhlottery.co.kr/olotto/game/game645.do"
     _cash_balance = "https://www.dhlottery.co.kr/mypage/home"
-    _assign_virtual_account_1 = "https://www.dhlottery.co.kr/kbank.do?method=kbankInit"
-    _assign_virtual_account_2 = "https://www.dhlottery.co.kr/kbank.do?method=kbankProcess"
+    _assign_virtual_account_1 = "https://www.dhlottery.co.kr/mypage/kbankInit.do"
+    _assign_virtual_account_2 = "https://www.dhlottery.co.kr/mypage/kbankProcess.do"
     _lotto_buy_list_url = "https://www.dhlottery.co.kr/mypage/selectMyLotteryledger.do"
     _DETAIL_REQUEST_DELAY = 0.5
 
@@ -428,66 +428,53 @@ class LotteryClient:
 
     def assign_virtual_account(self, deposit: Deposit):
         try:
-            resp = self._session.post(
+            resp = self._session.get(
                 self._assign_virtual_account_1,
-                data={
+                params={
+                    "VbankExpDate": self._get_tomorrow(),
                     "PayMethod": "VBANK",
-                    "VbankBankCode": "089",  # 가상계좌 채번가능 케이뱅크 코드
-                    "price": str(deposit.amount),
-                    "goodsName": "복권예치금",
-                    "vExp": self._get_tomorrow(),
+                    "VbankBankCode": "089",  # 케이뱅크 코드
+                    "Price": str(deposit.amount),
                 },
                 timeout=10,
             )
-            logger.debug(f"status_code: {resp.status_code}")
+            req = resp.json()["data"]["reqVO"]
+            logger.debug(f"kbankInit reqVO: {req}")
 
-            data = resp.json()
-            logger.debug(f"data: {data}")
+            resp2 = self._session.get(
+                self._assign_virtual_account_2,
+                params={
+                    "PayMethod": req.get("payMethod", "VBANK"),
+                    "GoodsName": req.get("goodsName"),
+                    "Moid": req.get("moid"),
+                    "UserIP": req.get("userIP"),
+                    "MallUserID": req.get("mallUserID"),
+                    "VbankExpDate": req.get("vbankExpDate"),
+                    "Amt": req.get("amt"),
+                    "VbankBankCode": req.get("vbankBankCode"),
+                    "VbankNum": req.get("fxVrAccountNo"),
+                    "FxVrAccountNo": req.get("fxVrAccountNo"),
+                    "VBankAccountName": req.get("buyerName"),
+                },
+                timeout=10,
+            )
+            res = resp2.json()["data"]["resVO"]
+            logger.debug(f"kbankProcess resVO: {res}")
 
-            body = {
-                "PayMethod": "VBANK",
-                "GoodsName": data["GoodsName"],
-                "GoodsCnt": "",
-                "BuyerTel": data["BuyerTel"],
-                "Moid": data["Moid"],
-                "MID": data["MID"],
-                "UserIP": data["UserIP"],
-                "MallIP": data["MallIP"],
-                "MallUserID": data["MallUserID"],
-                "VbankExpDate": data["VbankExpDate"],
-                "BuyerEmail": data["BuyerEmail"],
-                # "SocketYN": '',
-                # "GoodsCl": '',
-                # "EncodeParameters": '',
-                "EdiDate": data["EdiDate"],
-                "EncryptData": data["EncryptData"],
-                "Amt": data["amt"],
-                "BuyerName": data["BuyerName"],
-                "VbankBankCode": data["VbankBankCode"],
-                "VbankNum": data["FxVrAccountNo"],
-                "FxVrAccountNo": data["FxVrAccountNo"],
-                "VBankAccountName": data["BuyerName"],
-                "svcInfoPgMsgYn": "N",
-                "OptionList": "no_receipt",
-                "TransType": "0",  # 일반(0), 에스크로(1)
-                # "TrKey": None,
-            }
-            logger.debug(f"body: {body}")
+            if res.get("resultCode") == "FAIL":
+                raise RuntimeError("❗ 가상계좌 발급이 거절되었습니다.")
 
-            resp = self._session.post(self._assign_virtual_account_2, data=body, timeout=10)
-            logger.debug(f"resp: {resp}")
-            logger.debug(f"resp.text: {resp.text}")
+            vbank_num = res.get("vbankNum", "")
+            bank_name = res.get("vbankBankName", "케이뱅크")
+            if not vbank_num:
+                raise RuntimeError("❗ 가상계좌 번호를 받지 못했습니다.")
 
-            soup = BeautifulSoup(resp.text, "html5lib")
-
-            elem = soup.select("#contents")
-
-            logger.debug(f"elem: {elem}")
-
-            전용가상계좌 = elem[0].select("span")[0].contents[0]
-            결제신청금액 = elem[0].select(".color_key1")[0].contents[0]
-
+            formatted = f"{vbank_num[:3]}-{vbank_num[3:7]}-{vbank_num[7:10]}-{vbank_num[10:]}"
+            전용가상계좌 = f"[{bank_name}] {formatted}"
+            결제신청금액 = f"{deposit.amount:,} 원"
             self._lottery_endpoint.print_result_of_assign_virtual_account(전용가상계좌, 결제신청금액)
+        except RuntimeError:
+            raise
         except Exception:
             raise RuntimeError("❗ 가상계좌를 할당하지 못했습니다.")
 
