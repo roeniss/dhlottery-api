@@ -1,4 +1,4 @@
-name: Build and Publish package, Write release note
+name: Build and Publish package
 
 on:
   workflow_dispatch:
@@ -23,19 +23,3 @@ jobs:
       - name: Execute publishing
         run: make build
       - uses: pypa/gh-action-pypi-publish@release/v1
-
-  release-note:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-      pull-requests: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
