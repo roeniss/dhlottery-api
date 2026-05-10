@@ -13,6 +13,46 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # to get tags
+
+      - name: Pre-flight checks
+        id: tag
+        run: |
+          fail() {
+            {
+              echo "## Release pre-flight FAILED"
+              echo ""
+              echo "**Reason:** $1"
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::$1"
+            exit 1
+          }
+
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            fail "Workflow must be dispatched from 'main' (got '${GITHUB_REF}')."
+          fi
+
+          TAG=$(git tag --points-at HEAD | grep '^v' | sort -V | tail -n1)
+          if [ -z "$TAG" ]; then
+            fail "main HEAD ($(git rev-parse --short HEAD)) has no version tag (vX.Y.Z)."
+          fi
+
+          VERSION="${TAG#v}"
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/dhapi/${VERSION}/json")
+          case "$STATUS" in
+            404) ;;
+            200) fail "dhapi==${VERSION} is already published on PyPI." ;;
+            *)   fail "Unexpected PyPI response: HTTP ${STATUS} when querying dhapi==${VERSION}." ;;
+          esac
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "## Release pre-flight OK"
+            echo ""
+            echo "- tag: \`$TAG\`"
+            echo "- version: \`$VERSION\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
